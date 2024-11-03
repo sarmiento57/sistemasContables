@@ -53,7 +53,7 @@ public class LibroMayor extends javax.swing.JPanel {
 
         try {
            
-            String sentencia = "SELECT c.nombre_cuenta, t.debe_trans, t.haber_trans "
+            String sentencia = "SELECT c.nombre_cuenta, t.debe_trans, t.haber_trans, t.descripcion "
                     + "FROM public.cuenta c "
                     + "LEFT JOIN public.transaccion t ON c.idcuenta = t.idcuenta "
                     + "ORDER BY c.idcuenta";
@@ -68,6 +68,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 String nombreCuenta = rs.getString("nombre_cuenta");
                 double debe = rs.getDouble("debe_trans");
                 double haber = rs.getDouble("haber_trans");
+                String descripcion = rs.getString("descripcion");
 
               
                 if (!cuentaActual.equals(nombreCuenta)) {
@@ -81,7 +82,7 @@ public class LibroMayor extends javax.swing.JPanel {
                         } else {
                             saldoCuenta = 0; 
                         }
-                        modelo.addRow(new Object[]{"", totalDebe, totalHaber, saldoCuenta});
+                        modelo.addRow(new Object[]{"TOTAL", totalDebe, totalHaber, saldoCuenta});
                     }
                     cuentaActual = nombreCuenta;
                     totalDebe = 0; 
@@ -99,7 +100,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 totalHaber += haber;
 
                
-                modelo.addRow(new Object[]{"", debe, haber, ""});
+                modelo.addRow(new Object[]{descripcion, debe, haber, ""});
             }
 
             
