@@ -44,11 +44,11 @@ public class BalanceGeneral extends javax.swing.JPanel {
     }
     public void actualizarTablaGeneral(JTable tabla) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.setRowCount(0); // Limpia la tabla
+        modelo.setRowCount(0); 
         
 
         try {
-            // Obtener fechas de la base de datos
+        
             String consultaFechas = "SELECT fecha_inicio, fecha_fin FROM periodo_contable";
             PreparedStatement sentenciaFechas = this.connect.getConexion().prepareStatement(consultaFechas);
             ResultSet rsFechas = sentenciaFechas.executeQuery();
@@ -62,20 +62,20 @@ public class BalanceGeneral extends javax.swing.JPanel {
                 java.sql.Date fechaFin = rsFechas.getDate("fecha_fin");
                 String fechaFinStr = sdf.format(fechaFin);
 
-                // Actualiza los JLabel con las fechas de inicio y fin
+               
                 lbFechaInicio.setText(fechaInicioStr);
                 lbFechaFin.setText(fechaFinStr);
             }
             rsFechas.close();
 
-            // Listar cuentas
+          
             List<String> cuentasActivo = Arrays.asList("Caja", "Bancos", "Cuentas por cobrar", "IVA Credito Fiscal", "Anticipos a proveedores");
             List<String> cuentasNoActivo = Arrays.asList("Alquiler pagado por anticipado", "Mobiliario y equipo de oficina", "Depreciación acumulada");
             List<String> cuentasPasivo = Arrays.asList("Impuestos por pagar", "IVA Debito Fiscal", "Anticipos de Clientes", "Cuentas por pagar");
             List<String> cuentasNoPasivo = Arrays.asList("Documentos por pagar");
             List<String> cuentasPatrimonio = Arrays.asList("Capital social");
 
-            // Primera consulta: Obtener idcuenta y nombre_cuenta
+            
             String sentencia = "SELECT idcuenta, nombre_cuenta FROM cuenta WHERE nombre_cuenta IN ('Caja', 'Bancos', 'Cuentas por cobrar', "
                     + "'IVA Credito Fiscal', 'Anticipos a proveedores', 'Alquiler pagado por anticipado', 'Mobiliario y equipo de oficina', "
                     + "'Depreciación acumulada', 'Impuestos por pagar', 'IVA Debito Fiscal', 'Anticipos de Clientes', 'Cuentas por pagar', "
@@ -95,7 +95,6 @@ public class BalanceGeneral extends javax.swing.JPanel {
                 int idcuenta = rs.getInt("idcuenta");
                 String nombre = rs.getString("nombre_cuenta");
 
-                // Consulta para obtener el total de debe_trans y haber_trans para esta cuenta
                 String consultaTransacciones = "SELECT SUM(debe_trans) AS total_debe, SUM(haber_trans) AS total_haber FROM transaccion WHERE idcuenta = ?";
                 PreparedStatement sentenciaTransacciones = this.connect.getConexion().prepareStatement(consultaTransacciones);
                 sentenciaTransacciones.setInt(1, idcuenta);
@@ -119,42 +118,28 @@ public class BalanceGeneral extends javax.swing.JPanel {
                 }
 
                 rsTransacciones.close();
-
               
-                modelo.addRow(new Object[]{idcuenta, nombre, debe, haber});
-                filaActual++;
-
-                if (filaActual == 5) {
-                    modelo.addRow(new Object[]{"12", "ACTIVO NO CORRIENTE",null,null, activoNo});
-                    filaActual++;
-                }
-                if (filaActual == 9) {
-                    modelo.addRow(new Object[]{"2", "PASIVOS", null, null, pasivos});
-                    filaActual++;
-                }
-                if (filaActual == 10) {
-                    modelo.addRow(new Object[]{"21", "PASIVOS CORRIENTE", null, null,pasivoCo});
-                    filaActual++;
-                }
-                if (filaActual == 15) {
-                    modelo.addRow(new Object[]{"22", "PASIVOS NO CORRIENTE", null,null, pasivoNo});
-                    filaActual++;
-                }
+                modelo.addRow(new Object[]{idcuenta, nombre, debe, haber});  
             }
             rs.close();
-
-            // Calculos finales después de procesar todas las cuentas
+            
             activos = activoCo + activoNo;
             pasivos = pasivoCo + pasivoNo;
             double utilidadEjercicio = estadoResultado.getUtilidadEjercicio();
             patrimonios = patrimonio + utilidadEjercicio;
             activoPasivo = patrimonios + pasivos;
+            
+            
+            modelo.insertRow(7, new Object[]{"12", "ACTIVO NO CORRIENTE", null, null, activoNo});
+            modelo.insertRow(11, new Object[]{"2", "PASIVOS", null, null, pasivos});
+            modelo.insertRow(12, new Object[]{"21", "PASIVOS CORRIENTE", null, null, pasivoCo});
+            modelo.insertRow(17, new Object[]{"22", "PASIVOS NO CORRIENTE", null, null, pasivoNo});
+            modelo.insertRow(19, new Object[]{"3", "PATRIMONIO", null, null, patrimonios});
 
-            // Actualiza las filas de la tabla con los resultados finales
+            // actualizar las filas del titulo
             modelo.setValueAt(activos, 0, 4);
             modelo.setValueAt(activoCo, 1, 4);
-            modelo.addRow(new Object[]{"3", "PATRIMONIO", null,null, patrimonios});
-            modelo.addRow(new Object[]{"3302", "UTILIDAD DEL EJERCICIO", utilidadEjercicio});
+            modelo.addRow(new Object[]{"3302", "Utilidad del ejercicio", utilidadEjercicio});
             modelo.addRow(new Object[]{"", "TOTAL PASIVO + CAPITAL",null,null, activoPasivo});
 
             System.out.println("Patrimonios después de la suma: " + patrimonios);

@@ -75,9 +75,9 @@ public class LibroMayor extends javax.swing.JPanel {
                     if (!cuentaActual.isEmpty()) {
                      
                         double saldoCuenta;
-                        if (isCuentaDeDeber(cuentaActual)) {
+                        if (CuentasDeber(cuentaActual)) {
                             saldoCuenta = totalDebe - totalHaber; 
-                        } else if (isCuentaDeHaber(cuentaActual)) {
+                        } else if (CuentasHaber(cuentaActual)) {
                             saldoCuenta = totalHaber - totalDebe; 
                         } else {
                             saldoCuenta = 0; 
@@ -106,9 +106,9 @@ public class LibroMayor extends javax.swing.JPanel {
             
             if (!cuentaActual.isEmpty()) {
                 double saldoCuenta;
-                if (isCuentaDeDeber(cuentaActual)) {
+                if (CuentasDeber(cuentaActual)) {
                     saldoCuenta = totalDebe - totalHaber; 
-                } else if (isCuentaDeHaber(cuentaActual)) {
+                } else if (CuentasHaber(cuentaActual)) {
                     saldoCuenta = totalHaber - totalDebe; 
                 } else {
                     saldoCuenta = 0; 
@@ -127,7 +127,7 @@ public class LibroMayor extends javax.swing.JPanel {
 
 
     //cuentas que crecen en el debe 
-    private boolean isCuentaDeDeber(String nombre) {
+    private boolean CuentasDeber(String nombre) {
         String[] cuentasDeDeber = {
             "Caja", "Bancos", "Cuentas por cobrar", "IVA Credito Fiscal",
             "Anticipos a proveedores", "Alquiler pagado por anticipado",
@@ -138,7 +138,7 @@ public class LibroMayor extends javax.swing.JPanel {
         return Arrays.asList(cuentasDeDeber).contains(nombre);
     }
     //listar cuentas que crecen en el haber
-    private boolean isCuentaDeHaber(String nombre) {
+    private boolean CuentasHaber(String nombre) {
         String[] cuentasDeHaber = {
             "Ingresos por Servicios", "Proyectos de Software Personalizado",
             "Mantenimiento y soporte", "Impuestos por pagar",
