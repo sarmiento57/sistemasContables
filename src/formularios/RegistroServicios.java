@@ -116,8 +116,8 @@ public class RegistroServicios extends javax.swing.JPanel {
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setText("Costo Total:           $");
 
+        txtCostoTotal.setEditable(false);
         txtCostoTotal.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtCostoTotal.setEnabled(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -205,7 +205,7 @@ public class RegistroServicios extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(SpCantEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, 48, Short.MAX_VALUE)
+                                    .addComponent(SpCantEmpleados, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
                                     .addComponent(spMeses, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                                 .addGap(184, 184, 184))
                             .addComponent(SpNumServicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

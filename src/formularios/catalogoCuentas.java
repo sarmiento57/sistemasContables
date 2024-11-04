@@ -114,6 +114,7 @@ public class catalogoCuentas extends javax.swing.JPanel {
         btnEliminar = new javax.swing.JButton();
 
         lb.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lb.setText("CATÁLOGO DE CUENTAS");
 
         tbCuentas.setModel(new javax.swing.table.DefaultTableModel(

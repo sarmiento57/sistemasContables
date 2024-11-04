@@ -148,7 +148,6 @@ public class LibroMayor extends javax.swing.JPanel {
         return Arrays.asList(cuentasDeHaber).contains(nombre);
     }
     
-    //agregar borde a la tabla
     private static class CustomCellRenderer extends DefaultTableCellRenderer {
 
         @Override
@@ -158,22 +157,44 @@ public class LibroMayor extends javax.swing.JPanel {
             c.setBorder(BorderFactory.createEmptyBorder());
 
            
-            if (value != null && (value.toString().equals("Debe") || value.toString().equals("Haber"))) {
-               
-                c.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY)); 
-            }
+            Color transparentGray = new Color(0, 0, 0, 20); 
 
            
+            Color defaultBackground = table.getBackground();
+
+            
+            if (hasDataInRow(table, row)) {
+                c.setBackground(transparentGray); 
+            } else {
+                c.setBackground(defaultBackground); 
+            }
+
+            if (value != null && (value.toString().equals("Debe") || value.toString().equals("Haber"))) {
+                c.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+            }
+
             if (column == 2 && value != null && !value.toString().isEmpty()) {
-        
                 Border currentBorder = c.getBorder();
                 Border newBorder = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY);
-                c.setBorder(BorderFactory.createCompoundBorder(newBorder, currentBorder)); 
+                c.setBorder(BorderFactory.createCompoundBorder(newBorder, currentBorder));
             }
 
             return c;
         }
+
+       
+        private boolean hasDataInRow(JTable table, int row) {
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                Object cellValue = table.getValueAt(row, col);
+                if (cellValue != null && !cellValue.toString().trim().isEmpty()) {
+                    return true; 
+                }
+            }
+            return false; 
+        }
     }
+
+
 
 
 
@@ -209,7 +230,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "Cuenta", "", "", ""
+                "", "", "", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
