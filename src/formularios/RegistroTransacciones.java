@@ -9,6 +9,7 @@ import clases.Conexion;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -33,6 +34,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 + "font:$h1.font");
         
         llenarComboBox();
+        periodoContable();
         actualizarTabla(tbTransaccion);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -103,6 +105,10 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         btnLimpiar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        txtFinicio = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        txtFfin = new javax.swing.JLabel();
 
         lb.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -221,6 +227,10 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("Listado de transacciónes");
 
+        jLabel9.setText("Periodo Contable:");
+
+        jLabel11.setText("Hasta");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -253,7 +263,15 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnEliminar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFinicio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFfin)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -285,9 +303,15 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEliminar)
-                    .addComponent(btnLimpiar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnEliminar)
+                        .addComponent(btnLimpiar))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(txtFinicio)
+                        .addComponent(jLabel11)
+                        .addComponent(txtFfin)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -457,6 +481,35 @@ public static void main(String args[]) {
             ex.printStackTrace(); //Maneja la excepción SQL.
         }
     }
+    
+    public void periodoContable() {
+     
+
+        try {
+            // Obtener fechas de la base de datos
+            String consultaFechas = "SELECT fecha_inicio, fecha_fin FROM periodo_contable";
+            PreparedStatement sentenciaFechas = this.connect.getConexion().prepareStatement(consultaFechas);
+            ResultSet rsFechas = sentenciaFechas.executeQuery();
+
+            if (rsFechas.next()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMM yyyy");
+
+                java.sql.Date fechaInicio = rsFechas.getDate("fecha_inicio");
+                String fechaInicioStr = sdf.format(fechaInicio);
+
+                java.sql.Date fechaFin = rsFechas.getDate("fecha_fin");
+                String fechaFinStr = sdf.format(fechaFin);
+
+                txtFinicio.setText(fechaInicioStr);
+                txtFfin.setText(fechaFinStr);
+            }
+            rsFechas.close();
+
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarTransaccion;
@@ -464,6 +517,7 @@ public static void main(String args[]) {
     private javax.swing.JButton btnLimpiar;
     private javax.swing.JComboBox<String> cbCuenta;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -471,6 +525,7 @@ public static void main(String args[]) {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private com.toedter.calendar.JDateChooser jfecha;
@@ -478,6 +533,8 @@ public static void main(String args[]) {
     private javax.swing.JTable tbTransaccion;
     private javax.swing.JTextField txtDebe;
     private javax.swing.JTextField txtDescripcion;
+    private javax.swing.JLabel txtFfin;
+    private javax.swing.JLabel txtFinicio;
     private javax.swing.JTextField txtHaber;
     private javax.swing.JTextField txtIdTransaccion;
     // End of variables declaration//GEN-END:variables
