@@ -83,7 +83,7 @@ public class RegistroServicios extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         btnCostosIndirectos = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        txtCIF = new javax.swing.JTextField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -123,19 +123,19 @@ public class RegistroServicios extends javax.swing.JPanel {
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel9.setText("Precio Venta:         $");
+        jLabel9.setText("Precio Venta:    $");
 
         txtCostoTotal.setEditable(false);
         txtCostoTotal.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel12.setText("Costo Total:           $");
+        jLabel12.setText("Costo Total:      $");
 
         txtPrecioVenta.setEditable(false);
         txtPrecioVenta.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel13.setText("Mano de Obra:      $");
+        jLabel13.setText("Mano de Obra: $");
 
         txtManoObra.setEditable(false);
         txtManoObra.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
@@ -146,18 +146,13 @@ public class RegistroServicios extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                        .addGap(12, 12, 12))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCostoTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 18, Short.MAX_VALUE)
+                    .addComponent(txtCostoTotal)
                     .addComponent(txtPrecioVenta)
                     .addComponent(txtManoObra))
                 .addContainerGap())
@@ -166,21 +161,21 @@ public class RegistroServicios extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(txtManoObra))
+                    .addComponent(txtManoObra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtCostoTotal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPrecioVenta)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(4, 4, 4)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -200,17 +195,17 @@ public class RegistroServicios extends javax.swing.JPanel {
 
         tbServicio.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Nombre Cliente", "Servicio", "N° Trabajadores", "Descripción", "N° Meses", "Mano Obra", "Costo Total", "Precio Venta"
+                "Cliente", "Servicio", "N° Trabajadores", "Descripción", "N° Meses", "Mano Obra", "CIF(%)", "Costo Total", "Precio Venta"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -230,9 +225,11 @@ public class RegistroServicios extends javax.swing.JPanel {
             }
         });
 
-        jLabel10.setText("Porcentaje CIF:");
+        jLabel10.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        jLabel10.setText("Porcentaje CIF: %");
 
-        jLabel11.setText("32%");
+        txtCIF.setEditable(false);
+        txtCIF.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -245,7 +242,7 @@ public class RegistroServicios extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
                                 .addGap(107, 107, 107))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -270,20 +267,25 @@ public class RegistroServicios extends javax.swing.JPanel {
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(SpCantEmpleados, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(spMeses, javax.swing.GroupLayout.Alignment.LEADING)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                                .addGap(85, 85, 85)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel10)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(btnCalcularCosto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnCostosIndirectos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                    .addComponent(btnCostosIndirectos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(btnCalcularCosto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel10)
+                                                .addGap(4, 4, 4)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(txtCIF, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE))))))))
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(144, 144, 144))
+                .addGap(125, 125, 125))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3)
@@ -299,12 +301,13 @@ public class RegistroServicios extends javax.swing.JPanel {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(SpNumServicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(cbTipoServicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addComponent(btnCostosIndirectos)))
+                        .addComponent(btnCostosIndirectos))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(cbTipoServicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -325,7 +328,7 @@ public class RegistroServicios extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnGuardar)
                             .addComponent(btnCalcularCosto))))
-                .addGap(30, 30, 30)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -334,12 +337,12 @@ public class RegistroServicios extends javax.swing.JPanel {
                         .addGap(27, 27, 27)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane3))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
-                            .addComponent(jLabel11))
-                        .addGap(134, 134, 134)))
+                            .addComponent(txtCIF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(135, 135, 135)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -386,14 +389,16 @@ public class RegistroServicios extends javax.swing.JPanel {
     String cliente = txtCliente.getText();
     int cantEmpleados = (int) SpCantEmpleados.getValue();
     String descripcion = txtDescripcion.getText();
-    double manoObraDirecta = 0, costoIdirectoPor = 0;
+    double manoObraDirecta = 0, porcentajeCIF=0, cif=0;
     float total = 0, totalSinIva = 0, iva = 0;
     int cantmeses = (int) spMeses.getValue();
     double costosIdirectos = costosIndirectos.getCostosIndirectos();
     
+ 
+    
 
     // Imprime el valor de tipoServicio para verificar el contenido
-    System.out.println("Valor de tipoServicio: " + costosIdirectos);
+    
 
     //Validando campis   
     if (numServicio == 0 || cantmeses == 0 || tipoServicio.isEmpty() || cliente.isEmpty() || descripcion.isEmpty()) {
@@ -402,33 +407,34 @@ public class RegistroServicios extends javax.swing.JPanel {
         try {
             switch (tipoServicio) {
                 case "Desarrollo de software personalizado":
-                    manoObraDirecta = (cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador);
-                    costoIdirectoPor = (costosIdirectos * cantmeses) / (manoObraDirecta + (costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + (costosIdirectos * costoIdirectoPor));
+                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador))*cantmeses;
+                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
+                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos *cantmeses)* porcentajeCIF));
                     iva = (float) (totalSinIva * 0.13);
-                    total = totalSinIva + iva;
+                    total = totalSinIva + iva; 
                     break;
 
                 case "Aplicaciones de gestion empresarial":
-                    manoObraDirecta = (cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador);
-                    costoIdirectoPor = (costosIdirectos * cantmeses) / (manoObraDirecta + (costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + (costosIdirectos * costoIdirectoPor));
+                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador))*cantmeses;
+                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
+                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos *cantmeses)* porcentajeCIF));
                     iva = (float) (totalSinIva * 0.13);
-                    total = totalSinIva + iva;
+                    total = totalSinIva + iva; 
                     break;
 
                 case "Consultoria tecnologica":
-                    manoObraDirecta = (1 * costoRealDesarrollador);
-                    costoIdirectoPor = ((costosIdirectos * cantmeses) / (manoObraDirecta + (costosIdirectos * cantmeses)));
-                    totalSinIva = (float) (manoObraDirecta + (costosIdirectos * costoIdirectoPor));
+                    manoObraDirecta = (1 * costoRealDesarrollador)*cantmeses;
+                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
+                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos*cantmeses) * porcentajeCIF));
                     iva = (float) (totalSinIva * 0.13);
                     total = totalSinIva + iva;
+                   
                     break;
 
                 case "Mantenimiento y soporte tecnico":
-                    manoObraDirecta = (1 * costoRealDesarrollador);
-                    costoIdirectoPor = ((costosIdirectos * cantmeses) / (manoObraDirecta + (costosIdirectos * cantmeses)));
-                    totalSinIva = (float) (manoObraDirecta + (costosIdirectos * costoIdirectoPor));
+                    manoObraDirecta = (1 * costoRealDesarrollador)*cantmeses;
+                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
+                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos*cantmeses) * porcentajeCIF));
                     iva = (float) (totalSinIva * 0.13);
                     total = totalSinIva + iva;
                     break;
@@ -440,7 +446,22 @@ public class RegistroServicios extends javax.swing.JPanel {
             txtManoObra.setText(String.format("%.2f", manoObraDirecta));
             txtCostoTotal.setText(String.format("%.2f", totalSinIva));
             txtPrecioVenta.setText(String.format("%.2f", total));
+            
+            cif = (porcentajeCIF*100);
+            txtCIF.setText(String.format("%.0f", cif));
             btnCalcularCosto.setEnabled(false);
+            
+            System.out.println("Mano de obra: " + manoObraDirecta);
+            System.out.println("Total sin iva: " + totalSinIva);
+            System.out.println("iva: " + iva);
+            System.out.println("total: " + total);
+            System.out.println("por centaje cif: " + porcentajeCIF);
+            
+            System.out.println("analista: " + costoRealAnalista);
+            System.out.println("desarrollador: " + costoRealDesarrollador);
+            System.out.println("coordinador: " + costoRealCoordinador);
+            
+            
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Error, verifique los campos numéricos.");
@@ -468,6 +489,7 @@ public class RegistroServicios extends javax.swing.JPanel {
         String txtCostoT = txtCostoTotal.getText().trim();
         String precioVenta = txtPrecioVenta.getText().trim();
         String manoObra = txtManoObra.getText().trim();
+        String cif = txtCIF.getText().trim();
         int numMeses = (int) spMeses.getValue();
 
         // Validando los campos
@@ -485,7 +507,8 @@ public class RegistroServicios extends javax.swing.JPanel {
             float costoTotal = Float.parseFloat(txtCostoT);
             float precioTotal = Float.parseFloat(precioVenta);
             double manoObraTotal = Double.parseDouble(manoObra);
-            String sentencia = "INSERT INTO servicios (id, idservicio, nombre_cliente, cantEmpleados, descripcion, costoTotal, cantidad_meses, servicio, precioventa, mano_obra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            double cifPOR = Double.parseDouble(cif);
+            String sentencia = "INSERT INTO servicios (id, idservicio, nombre_cliente, cantEmpleados, descripcion, costoTotal, cantidad_meses, servicio, precioventa, mano_obra, por_cif) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
             // Configuración de los parámetros de la consulta
@@ -499,6 +522,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             ps.setString(8, servicio);
             ps.setFloat(9, precioTotal);
             ps.setDouble(10, manoObraTotal);
+            ps.setDouble(11, cifPOR);
             
             
 
@@ -517,6 +541,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             txtCostoTotal.setText("");
             txtPrecioVenta.setText("");
             txtManoObra.setText("");
+            txtCIF.setText("");
             btnCalcularCosto.setEnabled(true);
             spMeses.setValue(0);
 
@@ -545,7 +570,7 @@ public class RegistroServicios extends javax.swing.JPanel {
         modelo.setRowCount(0); // Limpia la tabla
 
         try {
-            String sentencia = "SELECT nombre_cliente, cantempleados, descripcion, costototal, cantidad_meses, servicio, precioventa, mano_obra FROM servicios ORDER BY nombre_cliente";
+            String sentencia = "SELECT nombre_cliente, cantempleados, descripcion, costototal, cantidad_meses, servicio, precioventa, mano_obra, por_cif FROM servicios ORDER BY nombre_cliente";
             PreparedStatement sentencia1;
             sentencia1 = null;
             sentencia1 = this.connect.getConexion().prepareCall(sentencia);
@@ -559,14 +584,15 @@ public class RegistroServicios extends javax.swing.JPanel {
                 double costo = rs.getDouble("costototal");
                 double precio = rs.getDouble("precioventa");
                 double manoObra = rs.getDouble("mano_obra");
+                double cif = rs.getDouble("por_cif");
                 
                 
                 String costoAprox = String.format("%.2f", costo);
                 String precioAprox = String.format("%.2f", precio);
                 String manoAprox = String.format("%.2f", manoObra);
                 
- 
-                modelo.addRow(new Object[]{nombre, servicio, cantidadEmpleado, descripcion, meses,manoAprox, costoAprox, precioAprox});
+              
+                modelo.addRow(new Object[]{nombre, servicio, cantidadEmpleado, descripcion, meses,manoAprox, cif, costoAprox, precioAprox});
 
             }
             rs.close();
@@ -633,7 +659,6 @@ public class RegistroServicios extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cbTipoServicio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
@@ -651,6 +676,7 @@ public class RegistroServicios extends javax.swing.JPanel {
     private javax.swing.JTable jTable1;
     private javax.swing.JSpinner spMeses;
     private javax.swing.JTable tbServicio;
+    private javax.swing.JTextField txtCIF;
     private javax.swing.JTextField txtCliente;
     private javax.swing.JTextField txtCostoTotal;
     private javax.swing.JTextArea txtDescripcion;

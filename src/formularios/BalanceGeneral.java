@@ -139,7 +139,7 @@ public class BalanceGeneral extends javax.swing.JPanel {
             // actualizar las filas del titulo
             modelo.setValueAt(activos, 0, 4);
             modelo.setValueAt(activoCo, 1, 4);
-            modelo.addRow(new Object[]{"3302", "Utilidad del ejercicio", utilidadEjercicio});
+            modelo.addRow(new Object[]{"3302", "Utilidad del ejercicio",null, utilidadEjercicio});
             modelo.addRow(new Object[]{"", "TOTAL PASIVO + CAPITAL",null,null, activoPasivo});
 
             System.out.println("Patrimonios después de la suma: " + patrimonios);

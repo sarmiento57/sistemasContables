@@ -87,6 +87,12 @@ public class CostosIndirectos extends javax.swing.JPanel {
 
         jLabel4.setText("Costo por mes:");
 
+        txtCosto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCostoKeyTyped(evt);
+            }
+        });
+
         jLabel5.setText("Total costos indirectos:");
 
         txtCostos.setEditable(false);
@@ -280,6 +286,20 @@ public class CostosIndirectos extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void txtCostoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCostoKeyTyped
+        char c = evt.getKeyChar();
+        String text = txtCosto.getText();
+        if (!Character.isDigit(c) && c != '.' && c != '-') {
+            evt.consume();
+        }
+        if (c == '.' && text.contains(".")) {
+            evt.consume();
+        }
+        if (c == '-' && (text.contains("-") || !text.isEmpty())) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtCostoKeyTyped
 
     
     public void actualizarTabla(JTable tabla) {

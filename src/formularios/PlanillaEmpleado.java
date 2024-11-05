@@ -139,9 +139,25 @@ public void actualizarTabla(JTable tabla) {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("PLANILLA GENERAL");
 
+        txtBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBuscarActionPerformed(evt);
+            }
+        });
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyTyped(evt);
+            }
+        });
+
         jLabel2.setText("DUI:");
 
         btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         tbEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -178,6 +194,18 @@ public void actualizarTabla(JTable tabla) {
 
         jLabel7.setText("Salario Nominal:");
 
+        txtDui.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDuiKeyTyped(evt);
+            }
+        });
+
+        txtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSalarioKeyTyped(evt);
+            }
+        });
+
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,21 +234,21 @@ public void actualizarTabla(JTable tabla) {
             }
         });
 
+        txtIsss.setEditable(false);
         txtIsss.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtIsss.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtIsss.setEnabled(false);
 
+        txtIncaf.setEditable(false);
         txtIncaf.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtIncaf.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtIncaf.setEnabled(false);
 
+        txtAfp.setEditable(false);
         txtAfp.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtAfp.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtAfp.setEnabled(false);
 
+        txtPrestaciones.setEditable(false);
         txtPrestaciones.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtPrestaciones.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtPrestaciones.setEnabled(false);
 
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
@@ -244,14 +272,12 @@ public void actualizarTabla(JTable tabla) {
                                 .addComponent(btnCalcularPrestaciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel10)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtIsss))
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel11)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtAfp)))
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel11))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtAfp)
+                                    .addComponent(txtIsss))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel12)
@@ -556,7 +582,62 @@ public void actualizarTabla(JTable tabla) {
         }
     }//GEN-LAST:event_btnCalcularPrestacionesActionPerformed
 
+    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBuscarActionPerformed
 
+    private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
+        char c = evt.getKeyChar();
+
+        if (!(Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE))) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtBuscarKeyTyped
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        String duiBusqueda = txtBuscar.getText();
+        if (!duiBusqueda.isEmpty()) {
+            buscarEmpleado(duiBusqueda);
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un número de DUI.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
+        char c = evt.getKeyChar();
+        String text = txtSalario.getText();
+        if (!Character.isDigit(c) && c != '.' && c != '-') {
+            evt.consume();  
+        }
+        if (c == '.' && text.contains(".")) {
+            evt.consume();  
+        }
+        if (c == '-' && (text.contains("-") || !text.isEmpty())) {
+            evt.consume(); 
+        }
+    }//GEN-LAST:event_txtSalarioKeyTyped
+
+    private void txtDuiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDuiKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c)) {
+            evt.consume(); 
+        }
+    }//GEN-LAST:event_txtDuiKeyTyped
+
+    private void buscarEmpleado(String dui) {
+        DefaultTableModel modelo = (DefaultTableModel) tbEmpleados.getModel();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            String duiEmpleado = modelo.getValueAt(i, 0).toString(); //el DUI está en la primera columna
+            if (dui.equals(duiEmpleado)) {
+                tbEmpleados.setRowSelectionInterval(i, i); // Se resalta la fila con el empleado encontrado
+                Rectangle rect = tbEmpleados.getCellRect(i, 0, true);
+                tbEmpleados.scrollRectToVisible(rect); // Se desplaza para hacer visible la fila(cuando la tabla tiene varios datos)
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Empleado no encontrado.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+        txtBuscar.setText("");
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnBuscar;

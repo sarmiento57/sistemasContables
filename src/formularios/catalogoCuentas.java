@@ -145,7 +145,7 @@ public class catalogoCuentas extends javax.swing.JPanel {
             }
         });
 
-        btnEliminar.setText("Eliminar cuneta");
+        btnEliminar.setText("Eliminar cuenta");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarActionPerformed(evt);
