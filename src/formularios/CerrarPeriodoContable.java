@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class CerrarPeriodoContable extends javax.swing.JPanel {
 

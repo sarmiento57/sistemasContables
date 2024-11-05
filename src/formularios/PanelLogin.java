@@ -6,7 +6,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class PanelLogin extends JPanel {
 

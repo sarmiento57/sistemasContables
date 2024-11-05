@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import sistemacontable.SubCuenta;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class RegistroServicios extends javax.swing.JPanel {
 

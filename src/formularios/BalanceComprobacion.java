@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class BalanceComprobacion extends javax.swing.JPanel {
 

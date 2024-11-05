@@ -21,7 +21,7 @@ import javax.swing.table.TableColumnModel;
 import sistemacontable.SubCuenta;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class PlanillaEmpleado extends javax.swing.JPanel {
 

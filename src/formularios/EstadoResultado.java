@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class EstadoResultado extends javax.swing.JPanel {
 

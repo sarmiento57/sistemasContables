@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class MenuItem extends JPanel {
 

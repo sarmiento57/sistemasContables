@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class Menu extends JPanel {
     Conexion connect = new Conexion();

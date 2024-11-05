@@ -6,7 +6,7 @@ package application;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 class JOptionPane {
     

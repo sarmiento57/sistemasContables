@@ -6,7 +6,7 @@ package formularios;
 import java.util.ArrayList;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class Registro {
     NodoUsuario usuarios, fin;

@@ -5,7 +5,7 @@ import raven.toast.Notifications;
 
 /**
  *
- * @author Raven
+ * @author Carlos Escobar - ES21001
  */
 public class FormDashboard extends javax.swing.JPanel {
 

@@ -12,7 +12,7 @@ import clases.PeriodoContable;
 import javax.swing.JFrame;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class IniciarPeriodoContable extends javax.swing.JPanel {
 

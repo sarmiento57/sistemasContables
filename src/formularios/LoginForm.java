@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class LoginForm extends javax.swing.JPanel {
     public static Registro r = new Registro();

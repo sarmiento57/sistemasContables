@@ -10,18 +10,22 @@ import clases.Conexion;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class LibroMayor extends javax.swing.JPanel {
     
@@ -46,6 +50,27 @@ public class LibroMayor extends javax.swing.JPanel {
         for (int i = 0; i < tbLibroMayor.getColumnCount(); i++) {
             tbLibroMayor.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
+        
+        JTableHeader header = tbLibroMayor.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = header.columnAtPoint(e.getPoint());
+
+                //abrir jframe desde el indice o titulo de la tabla
+                if (column == 0) { 
+                   
+                    JFrame frame = new JFrame("Listado de transacciones");
+                    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frame.getContentPane().add(new Transacciones());
+                    frame.pack();
+                    frame.setLocationRelativeTo(null);
+                    frame.setResizable(false);
+                    frame.setAlwaysOnTop(true);
+                    frame.setVisible(true);
+                }
+            }
+        });
     }
 
     public void actualizarTabla() {
@@ -178,6 +203,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 Border newBorder = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY);
                 c.setBorder(BorderFactory.createCompoundBorder(newBorder, currentBorder));
             }
+            
 
             return c;
         }
@@ -193,6 +219,8 @@ public class LibroMayor extends javax.swing.JPanel {
             return false; 
         }
     }
+    
+    
 
 
 
@@ -230,7 +258,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "", "", "", ""
+                "Ver transacciones", "", "", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -265,8 +293,8 @@ public class LibroMayor extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lb)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents

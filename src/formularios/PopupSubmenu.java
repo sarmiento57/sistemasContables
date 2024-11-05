@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class PopupSubmenu extends JPanel {
 

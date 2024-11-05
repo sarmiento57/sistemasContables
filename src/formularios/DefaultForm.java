@@ -4,7 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class DefaultForm extends javax.swing.JPanel {
 

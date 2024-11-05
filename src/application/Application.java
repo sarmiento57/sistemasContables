@@ -17,7 +17,7 @@ import raven.toast.Notifications;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class Application extends javax.swing.JFrame {
 

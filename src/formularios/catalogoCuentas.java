@@ -21,7 +21,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class catalogoCuentas extends javax.swing.JPanel {
     

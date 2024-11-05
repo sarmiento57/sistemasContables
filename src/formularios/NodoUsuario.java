@@ -6,7 +6,7 @@ package formularios;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class NodoUsuario {
     //Atributos

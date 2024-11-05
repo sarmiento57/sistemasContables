@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class ModeloAgregarTansaccion extends AbstractTableModel {
     public List<SubCuenta> scuentas= new ArrayList<SubCuenta>();

@@ -33,7 +33,7 @@ import raven.toast.Notifications;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class MainForm extends JLayeredPane {
     Conexion connect = new Conexion();
