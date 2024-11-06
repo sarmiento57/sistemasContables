@@ -9,7 +9,9 @@ import java.awt.event.KeyEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -29,6 +31,10 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
      * Creates new form PlanillaEmpleado
      */
     Conexion connect = new Conexion();
+    private HashMap<String, Double> cargoSalarios = new HashMap<>();
+    private HashMap<String, Integer> diasLaborales = new HashMap<>();
+    private HashMap<String, Integer> horasLaboradas = new HashMap<>();
+    private HashMap<String, Double> recargos = new HashMap<>();
     
     public PlanillaEmpleado() {
         initComponents();
@@ -41,36 +47,96 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
             tbEmpleados.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
+
+
     private void LlenarComboBoxCargo() {
         DefaultComboBoxModel value;
         this.cbCargo.removeAllItems();
+        cargoSalarios.clear(); 
+        diasLaborales.clear(); 
+        horasLaboradas.clear(); 
+        recargos.clear(); 
+
         try {
-            cbCargo.removeAllItems();
-            String sentencia = "select * from cargo order by idservicio";
-            PreparedStatement sentencia1;
-            sentencia1 = null;
-            sentencia1 = this.connect.getConexion().prepareCall(sentencia);
+            String sentencia = "SELECT nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo FROM cargo ORDER BY idservicio";
+            PreparedStatement sentencia1 = this.connect.getConexion().prepareCall(sentencia);
             ResultSet rs = sentencia1.executeQuery();
             value = new DefaultComboBoxModel();
             cbCargo.setModel(value);
 
             while (rs.next()) {
-                SubCuenta aux = new SubCuenta();
-                aux.setNombre(rs.getString("nombre_cargo"));
-                value.addElement(aux);
+                String nombreCargo = rs.getString("nombre_cargo");
+                double salarioNominal = rs.getDouble("salario_nominal");
+                int dias = rs.getInt("dias_laborados");
+                int horas = rs.getInt("horas_laborados");
+                double recargo = rs.getDouble("recargo");
 
+               
+                cargoSalarios.put(nombreCargo, salarioNominal);
+                diasLaborales.put(nombreCargo, dias);
+                horasLaboradas.put(nombreCargo, horas);
+                recargos.put(nombreCargo, recargo);
+
+                value.addElement(nombreCargo);
             }
+
+            rs.close();
+            sentencia1.close();
         } catch (SQLException ex) {
-            ex.printStackTrace(); //Maneja la excepción SQL.
+            ex.printStackTrace(); 
         }
     }
+
+    
+    private double obtenerSalarioPorCargo(String cargo) {
+     
+        if (cargoSalarios.containsKey(cargo)) {
+            return cargoSalarios.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+    
+    private int obtenerDiasLaboradosPorCargo(String cargo) {
+      
+        if (diasLaborales.containsKey(cargo)) {
+            return diasLaborales.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+
+    private int obtenerHorasLaboradasPorCargo(String cargo) {
+       
+        if (horasLaboradas.containsKey(cargo)) {
+            return horasLaboradas.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+
+    private double obtenerRecargoPorCargo(String cargo) {
+       
+        if (recargos.containsKey(cargo)) {
+            return recargos.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+
+
+
     
 public void actualizarTabla(JTable tabla) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
         modelo.setRowCount(0); // Limpia la tabla
 
         try {
-            String sentencia = "SELECT idempleado, cargo, nombres, apellidos, isss, afp, incaf, salario, costoReal FROM empleados ORDER BY idempleado";
+            String sentencia = "SELECT idempleado, cargo, nombres, apellidos, isss, afp, incaf, salario, costoReal, cant_meses FROM empleados ORDER BY idempleado";
             PreparedStatement sentencia1;
             sentencia1 = null;
             sentencia1 = this.connect.getConexion().prepareCall(sentencia);
@@ -85,8 +151,9 @@ public void actualizarTabla(JTable tabla) {
                 String incaf = rs.getString("incaf");
                 double salario = rs.getDouble("salario");
                 String costoReal = rs.getString("costoReal");
+                int cantMeses = rs.getInt("cant_meses");
 
-                modelo.addRow(new Object[]{dui,cargo, nombres, apellidos, isss, afp, incaf, salario, costoReal});
+                modelo.addRow(new Object[]{dui,cargo, nombres, apellidos, cantMeses, isss, afp, incaf, salario, costoReal});
 
             }
             rs.close();
@@ -118,7 +185,6 @@ public void actualizarTabla(JTable tabla) {
         txtNombre = new javax.swing.JTextField();
         txtApellido = new javax.swing.JTextField();
         txtDui = new javax.swing.JTextField();
-        txtSalario = new javax.swing.JTextField();
         btnEliminar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -134,6 +200,8 @@ public void actualizarTabla(JTable tabla) {
         btnAgregar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         cbCargo = new javax.swing.JComboBox<>();
+        btnPuesto = new javax.swing.JButton();
+        spMeses = new javax.swing.JSpinner();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -161,17 +229,17 @@ public void actualizarTabla(JTable tabla) {
 
         tbEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "DUI", "Cargo", "Nombre", "Apellidos", "ISSS", "AFP", "INCAF", "Salario diario", "Salario mensual"
+                "DUI", "Puesto", "Nombre", "Apellidos", "Meses trabajados", "ISSS", "AFP", "INCAF", "Salario diario", "Salario mensual"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -192,17 +260,17 @@ public void actualizarTabla(JTable tabla) {
 
         jLabel6.setText("Apellidos:");
 
-        jLabel7.setText("Salario Nominal:");
+        jLabel7.setText("Meses trabajados:");
+
+        txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtApellidoKeyTyped(evt);
+            }
+        });
 
         txtDui.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtDuiKeyTyped(evt);
-            }
-        });
-
-        txtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtSalarioKeyTyped(evt);
             }
         });
 
@@ -304,7 +372,7 @@ public void actualizarTabla(JTable tabla) {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                         .addGap(12, 12, 12)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE))
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 18, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtIsss, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(6, 6, 6)
@@ -328,6 +396,13 @@ public void actualizarTabla(JTable tabla) {
 
         cbCargo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        btnPuesto.setText("Agregar puesto");
+        btnPuesto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPuestoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -346,20 +421,20 @@ public void actualizarTabla(JTable tabla) {
                             .addComponent(txtDui)
                             .addComponent(cbCargo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtNombre))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtApellido)
-                                    .addComponent(txtSalario)))
+                                    .addComponent(spMeses)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(143, 143, 143)
                                 .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(158, 158, 158)))))
+                                .addGap(116, 116, 116)
+                                .addComponent(btnPuesto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -372,16 +447,18 @@ public void actualizarTabla(JTable tabla) {
                     .addComponent(jLabel6)
                     .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtDui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(txtDui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7))
+                    .addComponent(spMeses, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEliminar)
                     .addComponent(jLabel8)
-                    .addComponent(cbCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPuesto))
                 .addGap(87, 87, 87)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -427,7 +504,7 @@ public void actualizarTabla(JTable tabla) {
                 .addGap(3, 3, 3)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -466,19 +543,27 @@ public void actualizarTabla(JTable tabla) {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        String cargoSeleccionado = (String) cbCargo.getSelectedItem();
+        double salarioNominal = obtenerSalarioPorCargo(cargoSeleccionado);
+
+        if (salarioNominal == 0) {
+            JOptionPane.showMessageDialog(this, "No se pudo recuperar el salario para el cargo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         // Obtener los datos de los campos
         String tipoCargo = cbCargo.getSelectedItem().toString();
         String nombres = txtNombre.getText();
+        int cantMeses = (int) spMeses.getValue(); 
         String apellidos = txtApellido.getText();
         String duiStr = txtDui.getText();
-        String salarioStr = txtSalario.getText();
         String salarioMensual = txtPrestaciones.getText();
         String isss = txtIsss.getText();
         String afp = txtAfp.getText();
         String incaf = txtIncaf.getText();
 
         // Realiza la validación de campos vacios
-        if (nombres.isEmpty() || apellidos.isEmpty() || tipoCargo.isEmpty() || duiStr.isEmpty() || salarioStr.isEmpty()) {
+        if (nombres.isEmpty() || cantMeses==0 || apellidos.isEmpty() || tipoCargo.isEmpty() || duiStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos. El DUI es obligatorio.");
         } else {
 
@@ -495,24 +580,23 @@ public void actualizarTabla(JTable tabla) {
                 } else {
 
                     try {
-                        //validando que salario sea dato numerico
-                        double salario = Double.parseDouble(salarioStr);
                         
-                        // Guardando datos en la base de datos
+              
                         try {
                             connect.conectar();
-                            String sentencia = "INSERT INTO empleados (idempleado, cargo, nombres, apellidos, salario, isss, afp, incaf, costoReal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            String sentencia = "INSERT INTO empleados (idempleado, cargo, nombres, apellidos, salario, isss, afp, incaf, costoReal, cant_meses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
                             ps.setString(1, duiStr);
                             ps.setString(2, tipoCargo);
                             ps.setString(3, nombres);
                             ps.setString(4, apellidos);
-                            ps.setDouble(5, salario);
+                            ps.setDouble(5, salarioNominal);
                             ps.setString(6, isss);
                             ps.setString(7, afp);
                             ps.setString(8, incaf);
                             ps.setString(9, salarioMensual);
+                            ps.setInt(10, cantMeses);
 
                             ps.executeUpdate();
 
@@ -521,7 +605,7 @@ public void actualizarTabla(JTable tabla) {
                             txtNombre.setText("");
                             txtApellido.setText("");
                             txtDui.setText("");
-                            txtSalario.setText("");
+                            spMeses.setValue(0); 
                             txtIsss.setText("");
                             txtAfp.setText("");
                             txtIncaf.setText("");
@@ -548,30 +632,97 @@ public void actualizarTabla(JTable tabla) {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnCalcularPrestacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularPrestacionesActionPerformed
-        String salarioStr = txtSalario.getText();
-        final int vacaciones = (int) 12.5;
-        final double recargo = (double) 1.315;
-        final int diaAguinaldo = (int) 15;
+        String cargoSeleccionado = (String) cbCargo.getSelectedItem();
+        double salarioNominal = obtenerSalarioPorCargo(cargoSeleccionado);
+        int diasLaborados = obtenerDiasLaboradosPorCargo(cargoSeleccionado);
+        int horasLaboradas = obtenerHorasLaboradasPorCargo(cargoSeleccionado);
+        double recargoPor = obtenerRecargoPorCargo(cargoSeleccionado);
+        
+        int cantMeses = (int) spMeses.getValue();  
+        double vacaciones = 0.0; 
+        double diaAguinaldo = 0.0;
+         //vaca
+        if (cantMeses > 0 && cantMeses < 12) {
+            
+            vacaciones = (15.0 / 12) * cantMeses; 
+        } else if (cantMeses >= 12 && cantMeses < 24) {
+         
+            vacaciones = 15;
+        } else if (cantMeses >= 24 && cantMeses < 36) {
+           
+            vacaciones = 17;
+        } else if (cantMeses >= 36 && cantMeses < 48) {
+           
+            vacaciones = 19;
+        } else if (cantMeses >= 48 && cantMeses < 60) {
+            
+            vacaciones = 21;
+        } else if (cantMeses >= 60 && cantMeses < 72) {
+            
+            vacaciones = 23;
+        } else if (cantMeses >= 72 && cantMeses < 84) {
+           
+            vacaciones = 25;
+        } else if (cantMeses >= 84 && cantMeses < 96) {
+            
+            vacaciones = 27;
+        } else if (cantMeses >= 96 && cantMeses < 108) {
+           
+            vacaciones = 29;
+        } else if (cantMeses >= 108) {
+       
+            vacaciones = 30;
+        }
+        
+        //agui
+        if (cantMeses > 0 && cantMeses <= 12) {
+           
+            diaAguinaldo = 15;
+        } else if (cantMeses >= 36 && cantMeses <= 108) {
+           
+            diaAguinaldo = 19;
+        } else if (cantMeses > 108) {
+            
+            diaAguinaldo = 21;
+        }
+
+       
+      
+ 
+        if (cantMeses == 0 ) {
+            JOptionPane.showMessageDialog(this, "Por favor, complete el campo de meses trabajados.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (salarioNominal == 0) {
+            JOptionPane.showMessageDialog(this, "No se pudo recuperar los datos para el cargo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        System.out.println("El salario del cargo " + cargoSeleccionado + " es: " + salarioNominal);
+        
+      
+        double recargo = 0;
+        
+        recargo = ((recargoPor/100)+1);
+        
+        
         final double Cisss = (double) 0.075;
         final double Cafp = (double) 0.0775;
         final double Cincaf = (double) 0.01;
 
-        if (salarioStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar un salario para calcular prestaciones.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            double salario = Double.parseDouble(salarioStr);
+ 
            
             //SEPTIMO DIA
-            double septimoDia = salario * 7;
-            double vaca = ((salario * vacaciones)*(recargo))/52;
-            double aguinaldo = (salario * diaAguinaldo)/52;
+            double septimoDia = salarioNominal * 7;
+            double vaca = ((salarioNominal * vacaciones)*(recargo))/52;
+            double aguinaldo = (salarioNominal * diaAguinaldo)/52;
             double isss = (septimoDia+vaca)*Cisss;
             double afp = (septimoDia+vaca)*Cafp;
             double incaf = (septimoDia+vaca)*Cincaf;
             double costoRealSemanal = (septimoDia+vaca+aguinaldo+isss+afp+incaf);
             double costoRealDiario = (costoRealSemanal/5.5);
             double costoRealMensual = costoRealDiario*22;
-            System.out.println("El salario es: " + costoRealDiario);
+            System.out.println("El recargo es: " + recargo);
  
             txtPrestaciones.setText(String.format("%.2f", costoRealMensual));
             txtAfp.setText(String.format("%.2f", afp));
@@ -579,7 +730,7 @@ public void actualizarTabla(JTable tabla) {
             txtIncaf.setText(String.format("%.2f", incaf));
 
             btnCalcularPrestaciones.setEnabled(false);
-        }
+        
     }//GEN-LAST:event_btnCalcularPrestacionesActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
@@ -603,26 +754,29 @@ public void actualizarTabla(JTable tabla) {
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
-        char c = evt.getKeyChar();
-        String text = txtSalario.getText();
-        if (!Character.isDigit(c) && c != '.' && c != '-') {
-            evt.consume();  
-        }
-        if (c == '.' && text.contains(".")) {
-            evt.consume();  
-        }
-        if (c == '-' && (text.contains("-") || !text.isEmpty())) {
-            evt.consume(); 
-        }
-    }//GEN-LAST:event_txtSalarioKeyTyped
-
     private void txtDuiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDuiKeyTyped
         char c = evt.getKeyChar();
         if (!Character.isDigit(c)) {
             evt.consume(); 
         }
     }//GEN-LAST:event_txtDuiKeyTyped
+
+    private void btnPuestoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPuestoActionPerformed
+        JFrame frame = new JFrame("Registrar Cargo laboral");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.getContentPane().add(new Puesto());
+        frame.pack();
+        frame.setLocationRelativeTo(this);
+
+        frame.setResizable(false);
+
+        frame.setAlwaysOnTop(true);
+        frame.setVisible(true);
+    }//GEN-LAST:event_btnPuestoActionPerformed
+
+    private void txtApellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtApellidoKeyTyped
 
     private void buscarEmpleado(String dui) {
         DefaultTableModel modelo = (DefaultTableModel) tbEmpleados.getModel();
@@ -643,6 +797,7 @@ public void actualizarTabla(JTable tabla) {
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnCalcularPrestaciones;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnPuesto;
     private javax.swing.JComboBox<String> cbCargo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -660,6 +815,7 @@ public void actualizarTabla(JTable tabla) {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner spMeses;
     private javax.swing.JTable tbEmpleados;
     private javax.swing.JTextField txtAfp;
     private javax.swing.JTextField txtApellido;
@@ -669,6 +825,5 @@ public void actualizarTabla(JTable tabla) {
     private javax.swing.JTextField txtIsss;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrestaciones;
-    private javax.swing.JTextField txtSalario;
     // End of variables declaration//GEN-END:variables
 }

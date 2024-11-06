@@ -17,7 +17,7 @@ import sistemacontable.SubCuenta;
 
 /**
  *
- * @author sarsg
+ * @author Carlos Escobar - ES21001
  */
 public class CostosIndirectos extends javax.swing.JPanel {
 
@@ -214,16 +214,16 @@ public class CostosIndirectos extends javax.swing.JPanel {
         String descripcion = txtDescripcion.getText();
         String costosMensuales = txtCosto.getText();
  
-        // Realiza la validación de campos vacios
+        
         if (nombre.isEmpty() || descripcion.isEmpty() || costosMensuales.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.");
         } else {
 
                     try {
-                        //validando que salario sea dato numerico
+                       
                         double costo = Double.parseDouble(costosMensuales);
 
-                        // Guardando datos en la base de datos
+                       
                         try {
                             connect.conectar();
                             String sentencia = "INSERT INTO costos_indirectos (nombre_indirectos, descripcion_indirectos, costomes) VALUES (?, ?, ?)";
@@ -242,7 +242,7 @@ public class CostosIndirectos extends javax.swing.JPanel {
                             txtDescripcion.setText("");
                             txtCosto.setText("");
 
-                            // Actualiza la tabla
+                            
                             actualizarTabla(tbCostos);
 
                         } catch (SQLException e) {
@@ -257,33 +257,46 @@ public class CostosIndirectos extends javax.swing.JPanel {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        int[] filasSeleccionadas = tbCostos.getSelectedRows();
+        int filaSeleccionada = tbCostos.getSelectedRow();
 
-        if (filasSeleccionadas.length == 0) {
-            JOptionPane.showMessageDialog(this, "No se han seleccionado empleados para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        if (filaSeleccionada != -1) {
 
-        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar el empleado seleccionado?", "Confirmación", JOptionPane.YES_NO_OPTION);
+            int confirmacion = JOptionPane.showConfirmDialog(this,
+                    "¿Estás seguro que quieres eliminar esta cuenta?",
+                    "Confirmar Eliminación",
+                    JOptionPane.YES_NO_OPTION);
 
-        if (confirmacion == JOptionPane.YES_OPTION) {
-            try {
-                connect.conectar();
-                String sentencia = "DELETE FROM costos_indirectos WHERE idindirectos = ?";
-                PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                try {
+                   
+                    String idIndirectosStr = (String) tbCostos.getValueAt(filaSeleccionada, 0);
+                    
+                    int idindirectos = Integer.parseInt(idIndirectosStr);
 
-                for (int fila : filasSeleccionadas) {
-                    String id = tbCostos.getValueAt(fila, 0).toString();
-                    ps.setString(1, id);
-                    ps.executeUpdate();
+                    String sentencia = "DELETE FROM costos_indirectos WHERE idindirectos = ?";
+                    PreparedStatement ps = connect.getConexion().prepareStatement(sentencia);
+                    ps.setInt(1, idindirectos);
+                    int filasAfectadas = ps.executeUpdate();
+                    ps.close();
+
+                    if (filasAfectadas > 0) {
+                        JOptionPane.showMessageDialog(this, "El costo indirecto se eliminó correctamente.", "Eliminación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+
+                        DefaultTableModel modeloT = (DefaultTableModel) tbCostos.getModel();
+                        modeloT.removeRow(filaSeleccionada);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se encontró el cargo para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Ocurrió un error al intentar eliminar el cargo.", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "El valor del ID no es válido.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-                JOptionPane.showMessageDialog(this, "Costo indirecto eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                actualizarTabla(tbCostos);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al eliminar Costo indirecto.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un cargo para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
