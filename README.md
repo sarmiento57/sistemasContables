@@ -1,10 +1,23 @@
 # sistemasContablesGrupo03GD02
-Aplicación de contabilidad SIC115
+Instrucciones para agregar librerías manualmente en Apache NetBeans
+Este proyecto de contabilidad (SIC115) requiere agregar dos librerías manualmente en Apache NetBeans, ya que no se reconocen automáticamente al clonar el repositorio.
 
+Pasos para añadir las librerías
+Abre el proyecto en Apache NetBeans.
 
-Hay que meter 2 librerias manualmente, para ello entrar apache netbeats, y en la parte de librerias agregar 2 al proyecto por que no las reconoce ella sola.
+En el árbol de archivos del proyecto, haz clic derecho sobre Libraries (Librerías).
 
-1- Click derecho en la opcion librerias del proyecto
-2- Add/JAR Folder
-3- añadir una por una  (jcalendar-1.3.3) y (JTattoo-1.6.13)
-4- la ubicacion de donde estan es donde se clono el proyecto y dirigirte a \sistemasContables\lib
+Selecciona Add JAR/Folder (Añadir JAR/Carpeta).
+
+Navega a la carpeta donde se clonó el proyecto y ubica la siguiente ruta:
+
+vbnet
+Copiar código
+\sistemasContables\lib
+Dentro de esta carpeta, selecciona y agrega cada uno de los archivos .jar uno por uno:
+
+jcalendar-1.3.3.jar
+JTattoo-1.6.13.jar
+Una vez agregadas, las librerías estarán disponibles en el proyecto y podrás utilizar todas sus funcionalidades.
+
+Nota: Asegúrate de mantener las librerías en la carpeta \sistemasContables\lib para evitar problemas de referencia en el proyecto.
