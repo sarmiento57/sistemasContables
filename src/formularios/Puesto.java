@@ -64,6 +64,12 @@ public class Puesto extends javax.swing.JPanel {
         btnEliminar = new javax.swing.JButton();
         spHoraLaborados = new javax.swing.JTextField();
         spDiasLaborales = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtIsss = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtAfp = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        txtIncaf = new javax.swing.JTextField();
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -81,17 +87,17 @@ public class Puesto extends javax.swing.JPanel {
 
         tbCargo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Cargo", "Salario", "Días laborales(Semana)", "Horas trabajadas(Día)", "% Recargo vacación"
+                "ID", "Cargo", "Salario", "Días", "Horas", "Recargo vacación", "ISSS", "AFP", "INCAF"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -102,11 +108,24 @@ public class Puesto extends javax.swing.JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbCargoMouseClicked(evt);
             }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                tbCargoMouseEntered(evt);
+            }
         });
         jScrollPane1.setViewportView(tbCargo);
         if (tbCargo.getColumnModel().getColumnCount() > 0) {
             tbCargo.getColumnModel().getColumn(0).setMinWidth(40);
             tbCargo.getColumnModel().getColumn(0).setMaxWidth(40);
+            tbCargo.getColumnModel().getColumn(3).setMinWidth(50);
+            tbCargo.getColumnModel().getColumn(3).setMaxWidth(50);
+            tbCargo.getColumnModel().getColumn(4).setMinWidth(50);
+            tbCargo.getColumnModel().getColumn(4).setMaxWidth(50);
+            tbCargo.getColumnModel().getColumn(6).setMinWidth(50);
+            tbCargo.getColumnModel().getColumn(6).setMaxWidth(50);
+            tbCargo.getColumnModel().getColumn(7).setMinWidth(50);
+            tbCargo.getColumnModel().getColumn(7).setMaxWidth(50);
+            tbCargo.getColumnModel().getColumn(8).setMinWidth(50);
+            tbCargo.getColumnModel().getColumn(8).setMaxWidth(50);
         }
 
         jLabel9.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
@@ -134,6 +153,18 @@ public class Puesto extends javax.swing.JPanel {
             }
         });
 
+        jLabel5.setText("ISSS: (%)");
+
+        jLabel8.setText("AFP: (%)");
+
+        txtAfp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAfpActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("INCAF: (%)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,37 +172,50 @@ public class Puesto extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(22, 22, 22)
-                        .addComponent(txtCargo))
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(22, 22, 22)
-                                .addComponent(txtSalarioNominal, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spHoraLaborados, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtRecargoVaca, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spDiasLaborales, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(190, 190, 190)
                         .addComponent(btnAutualizar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(208, 208, 208)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtRecargoVaca, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtIsss, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtAfp, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtIncaf, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSalarioNominal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spHoraLaborados, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spDiasLaborales, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(22, 22, 22)
+                                .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 513, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -192,9 +236,16 @@ public class Puesto extends javax.swing.JPanel {
                     .addComponent(spHoraLaborados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(spDiasLaborales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtRecargoVaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(txtRecargoVaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtAfp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10)
+                        .addComponent(txtIncaf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5)
+                        .addComponent(txtIsss, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel9)
                 .addGap(11, 11, 11)
@@ -214,8 +265,11 @@ public class Puesto extends javax.swing.JPanel {
         String horas = spHoraLaborados.getText();
         String dias = spDiasLaborales.getText();
         String recargo = txtRecargoVaca.getText();
+        String isss = txtIsss.getText();
+        String afp = txtAfp.getText();
+        String incaf = txtIncaf.getText();
 
-        if (cargo.isEmpty() || salarioNominal.isEmpty() || horas.isEmpty() || dias.isEmpty() || recargo.isEmpty()) {
+        if (cargo.isEmpty() || salarioNominal.isEmpty() || horas.isEmpty() || dias.isEmpty() || recargo.isEmpty()|| isss.isEmpty() || afp.isEmpty() || incaf.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.");
         } else {
             try {
@@ -223,6 +277,9 @@ public class Puesto extends javax.swing.JPanel {
                 double recargoPor = Double.parseDouble(recargo);
                 double diass = Double.parseDouble(dias);
                 double horass = Double.parseDouble(horas);
+                double issss = Double.parseDouble(isss);
+                double afpp = Double.parseDouble(afp);
+                double incaff = Double.parseDouble(incaf);
 
                 try {
                     connect.conectar();
@@ -234,7 +291,7 @@ public class Puesto extends javax.swing.JPanel {
                     if (rs.next() && rs.getInt(1) > 0) {
                         JOptionPane.showMessageDialog(this, "El cargo ya existe.");
                     } else {
-                        String sentencia = "INSERT INTO cargo (nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo) VALUES (?, ?, ?, ?, ?)";
+                        String sentencia = "INSERT INTO cargo (nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo, isss, afp, incaf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                         PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
                         ps.setString(1, cargo);
@@ -242,6 +299,9 @@ public class Puesto extends javax.swing.JPanel {
                         ps.setDouble(3, diass);
                         ps.setDouble(4, horass);
                         ps.setDouble(5, recargoPor);
+                        ps.setDouble(6, issss);
+                        ps.setDouble(7, afpp);
+                        ps.setDouble(8, incaff);
 
                         ps.executeUpdate();
 
@@ -252,6 +312,10 @@ public class Puesto extends javax.swing.JPanel {
                         spHoraLaborados.setText("");
                         spDiasLaborales.setText("");
                         txtRecargoVaca.setText("");
+                        txtIsss.setText("");
+                        txtAfp.setText("");
+                        txtIncaf.setText("");
+                        
 
                         actualizarTabla(tbCargo);
                     }
@@ -271,35 +335,50 @@ public class Puesto extends javax.swing.JPanel {
         double diasLaborales = Double.parseDouble(spDiasLaborales.getText());
         double horasLaboradas = Double.parseDouble(spHoraLaborados.getText());
         double recargo = Double.parseDouble(txtRecargoVaca.getText());
+        double isss = Double.parseDouble(txtIsss.getText());
+        double afp = Double.parseDouble(txtAfp.getText());
+        double incaf = Double.parseDouble(txtIncaf.getText());
 
-        // Verifica que no estén vacíos los campos antes de proceder
-        if (cargo.isEmpty() || salarioNominal <= 0 || diasLaborales <= 0 || horasLaboradas <= 0 || recargo < 0) {
+       
+        if (cargo.isEmpty() || salarioNominal <= 0 || diasLaborales <= 0 || horasLaboradas <= 0 || recargo < 0 || isss <= 0 || afp <= 0 || incaf <= 0 ) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos correctamente.");
             return;
         }
 
         try {
-            String sentenciaUpdate = "UPDATE cargo SET salario_nominal = ?, dias_laborados = ?, horas_laborados = ?, recargo = ? WHERE nombre_cargo = ?";
+            String sentenciaUpdate = "UPDATE cargo SET salario_nominal = ?, dias_laborados = ?, horas_laborados = ?, recargo = ?, isss = ?, afp = ?, incaf = ? WHERE nombre_cargo = ?";
+
             PreparedStatement sentencia = connect.getConexion().prepareStatement(sentenciaUpdate);
 
-            // Configurar los valores en la sentencia
+           
             sentencia.setDouble(1, salarioNominal);          
             sentencia.setDouble(2, diasLaborales);
             sentencia.setDouble(3, horasLaboradas);
             sentencia.setDouble(4, recargo);
-            sentencia.setString(5, cargo);
+            sentencia.setDouble(5, isss);
+            sentencia.setDouble(6, afp);
+            sentencia.setDouble(7, incaf);
+            sentencia.setString(8, cargo);
 
-            // Ejecutar la actualización
+            
             int rowsUpdated = sentencia.executeUpdate();
 
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(this, "Datos actualizados correctamente.");
-                actualizarTabla(tbCargo); // Actualiza la tabla para reflejar los cambios
+                actualizarTabla(tbCargo); 
             } else {
                 JOptionPane.showMessageDialog(this, "Error al actualizar los datos.");
             }
 
             sentencia.close();
+            txtCargo.setText("");
+            txtSalarioNominal.setText("");
+            spHoraLaborados.setText("");
+            spDiasLaborales.setText("");
+            txtRecargoVaca.setText("");
+            txtIsss.setText("");
+            txtAfp.setText("");
+            txtIncaf.setText(""); 
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al actualizar los datos: " + ex.getMessage());
@@ -310,19 +389,25 @@ public class Puesto extends javax.swing.JPanel {
         int filaSeleccionada = tbCargo.getSelectedRow();
 
         if (filaSeleccionada != -1) {
-            // Obtener valores de la fila seleccionada
-            String cargo = tbCargo.getValueAt(filaSeleccionada, 0).toString();
-            String salarioNominal = tbCargo.getValueAt(filaSeleccionada, 1).toString();
-            String diasLaborados = tbCargo.getValueAt(filaSeleccionada, 2).toString();
-            String horasLaboradas = tbCargo.getValueAt(filaSeleccionada, 3).toString();
-            String recargo = tbCargo.getValueAt(filaSeleccionada, 4).toString();
+            
+            Object valorCargo = tbCargo.getValueAt(filaSeleccionada, 1);
+            Object valorSalarioNominal = tbCargo.getValueAt(filaSeleccionada, 2);
+            Object valorDiasLaborados = tbCargo.getValueAt(filaSeleccionada, 3);
+            Object valorHorasLaboradas = tbCargo.getValueAt(filaSeleccionada, 4);
+            Object valorRecargo = tbCargo.getValueAt(filaSeleccionada, 5);
+            Object valorIsss = tbCargo.getValueAt(filaSeleccionada, 6);
+            Object valorAfp = tbCargo.getValueAt(filaSeleccionada, 7);
+            Object valorIncaf = tbCargo.getValueAt(filaSeleccionada, 8);
 
-            // Cargar los valores en los campos
-            txtCargo.setText(cargo);
-            txtSalarioNominal.setText(salarioNominal);
-            spDiasLaborales.setText(diasLaborados);
-            spHoraLaborados.setText(horasLaboradas);
-            txtRecargoVaca.setText(recargo);
+    
+            txtCargo.setText(valorCargo != null ? valorCargo.toString() : "");
+            txtSalarioNominal.setText(valorSalarioNominal != null ? valorSalarioNominal.toString() : "");
+            spDiasLaborales.setText(valorDiasLaborados != null ? valorDiasLaborados.toString() : "");
+            spHoraLaborados.setText(valorHorasLaboradas != null ? valorHorasLaboradas.toString() : "");
+            txtRecargoVaca.setText(valorRecargo != null ? valorRecargo.toString() : "");
+            txtIsss.setText(valorIsss != null ? valorIsss.toString() : "");
+            txtAfp.setText(valorAfp != null ? valorAfp.toString() : "");
+            txtIncaf.setText(valorIncaf != null ? valorIncaf.toString() : "");
         }
     
     }//GEN-LAST:event_tbCargoMouseClicked
@@ -370,6 +455,14 @@ public class Puesto extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona un puesto para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void txtAfpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAfpActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAfpActionPerformed
+
+    private void tbCargoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbCargoMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbCargoMouseEntered
     
         
     public void actualizarTabla(JTable tabla) {
@@ -377,7 +470,7 @@ public class Puesto extends javax.swing.JPanel {
         modelo.setRowCount(0); 
 
         try {
-            String sentencia = "SELECT idservicio, nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo FROM cargo ORDER BY idservicio";
+            String sentencia = "SELECT idservicio, nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo, isss, afp, incaf FROM cargo ORDER BY idservicio";
             PreparedStatement sentencia1;
             sentencia1 = null;
             sentencia1 = this.connect.getConexion().prepareCall(sentencia);
@@ -389,9 +482,13 @@ public class Puesto extends javax.swing.JPanel {
                 double dias = rs.getDouble("dias_laborados");
                 double horas = rs.getDouble("horas_laborados"); 
                 double recargo = rs.getDouble("recargo");
+                double isss = rs.getDouble("isss");
+                double afp = rs.getDouble("afp");
+                double incaf = rs.getDouble("incaf");
+                
 
 
-                modelo.addRow(new Object[]{id, nombre, salarioNominal, dias, horas, recargo});
+                modelo.addRow(new Object[]{id, nombre, salarioNominal, dias, horas, recargo, isss, afp, incaf});
 
             }
             rs.close();
@@ -400,6 +497,10 @@ public class Puesto extends javax.swing.JPanel {
             spHoraLaborados.setText("");
             spDiasLaborales.setText("");
             txtRecargoVaca.setText("");
+            txtIsss.setText("");
+            txtAfp.setText("");
+            txtIncaf.setText("");
+            
             
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -413,17 +514,23 @@ public class Puesto extends javax.swing.JPanel {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField spDiasLaborales;
     private javax.swing.JTextField spHoraLaborados;
     private javax.swing.JTable tbCargo;
+    private javax.swing.JTextField txtAfp;
     private javax.swing.JTextField txtCargo;
+    private javax.swing.JTextField txtIncaf;
+    private javax.swing.JTextField txtIsss;
     private javax.swing.JTextField txtRecargoVaca;
     private javax.swing.JTextField txtSalarioNominal;
     // End of variables declaration//GEN-END:variables

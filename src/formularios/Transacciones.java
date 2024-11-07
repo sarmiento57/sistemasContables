@@ -53,7 +53,7 @@ public class Transacciones extends javax.swing.JPanel {
                 double debe = rs.getDouble("debe_trans");
                 double haber = rs.getDouble("haber_trans");
 //                modelo.addRow(new Object[]{fecha, idcuenta, nombre, descripcion, debe, haber});
-                modelo.addRow(new Object[]{idtransaccion, fecha, nombre, descripcion, debe, haber});
+                modelo.addRow(new Object[]{idcuenta, fecha, nombre, descripcion, debe, haber});
             }
             rs.close();
         } catch (SQLException ex) {

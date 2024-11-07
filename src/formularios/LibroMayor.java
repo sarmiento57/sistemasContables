@@ -108,23 +108,39 @@ public class LibroMayor extends javax.swing.JPanel {
                             saldoCuenta = 0; 
                         }
                         modelo.addRow(new Object[]{"TOTAL", totalDebe, totalHaber, saldoCuenta});
+                        modelo.addRow(new Object[]{"", "", "", ""});  
                     }
+                    
+                    // meter la categorias de las cuentas en las filas
+                    if ("Caja".equals(nombreCuenta)) {
+                        modelo.addRow(new Object[]{"", "ACTIVOS", "", ""});
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});}
+                    else if ("Impuestos por pagar".equals(nombreCuenta)) {
+                        modelo.addRow(new Object[]{"", "PASIVOS", "", ""});
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
+                    } else if ("Capital social".equals(nombreCuenta)) {
+                        modelo.addRow(new Object[]{"", "PATRIMONIO", "", ""});
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
+                    } else if ("Ingresos por Servicios".equals(nombreCuenta)) {
+                        modelo.addRow(new Object[]{"", "INGRESOS", "", ""});
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
+                    } else if ("Gastos de Personal Técnico".equals(nombreCuenta)) {
+                        modelo.addRow(new Object[]{"", "GASTOS", "", ""});
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
+                    } else {
+                        modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
+                    }
+                    
+                    
                     cuentaActual = nombreCuenta;
                     totalDebe = 0; 
                     totalHaber = 0; 
-                    
-                   
-                    modelo.addRow(new Object[]{"", "", "", ""}); 
 
-                    
-                    modelo.addRow(new Object[]{nombreCuenta, "Debe", "Haber", "Saldo"});
                 }
-
-               
+            
                 totalDebe += debe;
                 totalHaber += haber;
 
-               
                 modelo.addRow(new Object[]{descripcion, debe, haber, ""});
             }
 
@@ -138,7 +154,8 @@ public class LibroMayor extends javax.swing.JPanel {
                 } else {
                     saldoCuenta = 0; 
                 }
-                modelo.addRow(new Object[]{cuentaActual, totalDebe, totalHaber, saldoCuenta});
+                modelo.addRow(new Object[]{"TOTAL", totalDebe, totalHaber, saldoCuenta});
+                modelo.addRow(new Object[]{"", "", "", ""});
             }
 
             rs.close();
@@ -181,45 +198,119 @@ public class LibroMayor extends javax.swing.JPanel {
 
             c.setBorder(BorderFactory.createEmptyBorder());
 
-           
-            Color transparentGray = new Color(0, 0, 0, 20); 
+            Color activosColor = new Color(173, 216, 230);  
+            Color pasivosColor = new Color(144, 238, 144); 
+            Color patrimonioColor = new Color(255, 255, 204);  
+            Color ingresosColor = new Color(255, 223, 186);  
+            Color gastosColor = new Color(255, 182, 193);  
 
-           
             Color defaultBackground = table.getBackground();
+            //color del hover
+            Color hoverColor = new Color(255, 165, 0, 100);
+   
+            Object categoryObj = table.getValueAt(row, 1);  
 
-            
-            if (hasDataInRow(table, row)) {
-                c.setBackground(transparentGray); 
+            String category = null;
+            if (categoryObj != null) {
+               
+                if (categoryObj instanceof String) {
+                    category = (String) categoryObj;
+                } 
+                else if (categoryObj instanceof Double) {
+                    category = categoryObj.toString();
+                }
+            }
+
+            Color rowColor = defaultBackground;  
+            if (category != null) {
+                switch (category) {
+                    case "ACTIVOS":
+                        rowColor = activosColor;
+                        break;
+                    case "PASIVOS":
+                        rowColor = pasivosColor;
+                        break;
+                    case "PATRIMONIO":
+                        rowColor = patrimonioColor;
+                        break;
+                    case "INGRESOS":
+                        rowColor = ingresosColor;
+                        break;
+                    case "GASTOS":
+                        rowColor = gastosColor;
+                        break;
+                    default:
+                        rowColor = defaultBackground;  
+                        break;
+                }
+            }
+  
+            if (category != null && (category.equals("ACTIVOS") || category.equals("PASIVOS") || category.equals("PATRIMONIO") || category.equals("INGRESOS") || category.equals("GASTOS"))) {
+                if (column == 0 || column == 1 || column == 2 || column == 3) {
+                    c.setBackground(rowColor);  
+                }
+
+                if (value != null) {
+                    String valueStr = value.toString();
+                    if (valueStr.equals("ACTIVOS") || valueStr.equals("PASIVOS") || valueStr.equals("PATRIMONIO") || valueStr.equals("INGRESOS") || valueStr.equals("GASTOS")) {
+                        c.setForeground(Color.BLACK);  
+                    } else {
+                        c.setForeground(Color.BLACK); 
+                    }
+                }
             } else {
-                c.setBackground(defaultBackground); 
+              
+                if (hasDataInRow(table, row)) {
+                    c.setBackground(new Color(0, 0, 0, 20));  
+                } else {
+                    c.setBackground(defaultBackground);  
+                }
+
+               
+                if (value != null) {
+                    c.setForeground(table.getForeground());  
+                }
             }
 
             if (value != null && (value.toString().equals("Debe") || value.toString().equals("Haber"))) {
                 c.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
             }
-
+ 
             if (column == 2 && value != null && !value.toString().isEmpty()) {
                 Border currentBorder = c.getBorder();
                 Border newBorder = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY);
                 c.setBorder(BorderFactory.createCompoundBorder(newBorder, currentBorder));
             }
             
+           
+            if (isSelected || hasFocus) {
+                c.setBackground(hoverColor);  
+            }
 
             return c;
         }
 
-       
         private boolean hasDataInRow(JTable table, int row) {
             for (int col = 0; col < table.getColumnCount(); col++) {
                 Object cellValue = table.getValueAt(row, col);
                 if (cellValue != null && !cellValue.toString().trim().isEmpty()) {
-                    return true; 
+                    return true;
                 }
             }
-            return false; 
+            return false;
         }
     }
-    
+
+
+
+
+
+
+
+
+
+
+
     
 
 
@@ -260,22 +351,8 @@ public class LibroMayor extends javax.swing.JPanel {
             new String [] {
                 "Ver transacciones", "", "", ""
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         jScrollPane1.setViewportView(tbLibroMayor);
-        if (tbLibroMayor.getColumnModel().getColumnCount() > 0) {
-            tbLibroMayor.getColumnModel().getColumn(0).setResizable(false);
-            tbLibroMayor.getColumnModel().getColumn(1).setResizable(false);
-            tbLibroMayor.getColumnModel().getColumn(2).setResizable(false);
-            tbLibroMayor.getColumnModel().getColumn(3).setResizable(false);
-        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

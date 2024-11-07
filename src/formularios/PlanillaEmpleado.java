@@ -6,6 +6,8 @@ package formularios;
 import clases.Conexion;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,9 +34,17 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
      */
     Conexion connect = new Conexion();
     private HashMap<String, Double> cargoSalarios = new HashMap<>();
-    private HashMap<String, Integer> diasLaborales = new HashMap<>();
-    private HashMap<String, Integer> horasLaboradas = new HashMap<>();
+    private HashMap<String, Double> diasLaborales = new HashMap<>();
+    private HashMap<String, Double> horasLaboradas = new HashMap<>();
     private HashMap<String, Double> recargos = new HashMap<>();
+    private HashMap<String, Double> isssPor = new HashMap<>();
+    private HashMap<String, Double> afpPor = new HashMap<>();
+    private HashMap<String, Double> incafPor = new HashMap<>();
+    
+    private double septimoDia;
+    private double vaca;
+    private double aguinaldo;
+
     
     public PlanillaEmpleado() {
         initComponents();
@@ -58,7 +68,7 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
         recargos.clear(); 
 
         try {
-            String sentencia = "SELECT nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo FROM cargo ORDER BY idservicio";
+            String sentencia = "SELECT nombre_cargo, salario_nominal, dias_laborados, horas_laborados, recargo, isss, afp, incaf FROM cargo ORDER BY idservicio";
             PreparedStatement sentencia1 = this.connect.getConexion().prepareCall(sentencia);
             ResultSet rs = sentencia1.executeQuery();
             value = new DefaultComboBoxModel();
@@ -67,15 +77,21 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
             while (rs.next()) {
                 String nombreCargo = rs.getString("nombre_cargo");
                 double salarioNominal = rs.getDouble("salario_nominal");
-                int dias = rs.getInt("dias_laborados");
-                int horas = rs.getInt("horas_laborados");
+                double dias = rs.getDouble("dias_laborados");
+                double horas = rs.getDouble("horas_laborados");
                 double recargo = rs.getDouble("recargo");
+                double isss = rs.getDouble("isss");
+                double afp = rs.getDouble("afp");
+                double incaf = rs.getDouble("incaf");
 
                
                 cargoSalarios.put(nombreCargo, salarioNominal);
                 diasLaborales.put(nombreCargo, dias);
                 horasLaboradas.put(nombreCargo, horas);
                 recargos.put(nombreCargo, recargo);
+                isssPor.put(nombreCargo, isss);
+                afpPor.put(nombreCargo, afp);
+                incafPor.put(nombreCargo, incaf);
 
                 value.addElement(nombreCargo);
             }
@@ -98,7 +114,7 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
         }
     }
     
-    private int obtenerDiasLaboradosPorCargo(String cargo) {
+    private double obtenerDiasLaboradosPorCargo(String cargo) {
       
         if (diasLaborales.containsKey(cargo)) {
             return diasLaborales.get(cargo);
@@ -108,7 +124,7 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
         }
     }
 
-    private int obtenerHorasLaboradasPorCargo(String cargo) {
+    private double obtenerHorasLaboradasPorCargo(String cargo) {
        
         if (horasLaboradas.containsKey(cargo)) {
             return horasLaboradas.get(cargo);
@@ -127,16 +143,46 @@ public class PlanillaEmpleado extends javax.swing.JPanel {
             return 0;
         }
     }
+    
+    private double obtenerIsssPorCargo(String cargo) {
+
+        if (isssPor.containsKey(cargo)) {
+            return isssPor.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+    
+    private double obtenerAfpPorCargo(String cargo) {
+
+        if (afpPor.containsKey(cargo)) {
+            return afpPor.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
+    
+    private double obtenerIncafPorCargo(String cargo) {
+
+        if (incafPor.containsKey(cargo)) {
+            return incafPor.get(cargo);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cargo no encontrado. Verifique la selección.", "Error", JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+    }
 
 
 
     
 public void actualizarTabla(JTable tabla) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.setRowCount(0); // Limpia la tabla
+        modelo.setRowCount(0); 
 
         try {
-            String sentencia = "SELECT idempleado, cargo, nombres, apellidos, isss, afp, incaf, salario, costoReal, cant_meses FROM empleados ORDER BY idempleado";
+            String sentencia = "SELECT idempleado, cargo, nombres, apellidos, isss, afp, incaf, salario, costoReal, cant_meses, septimo_dia, vacaciones, aguinaldo FROM empleados ORDER BY idempleado";
             PreparedStatement sentencia1;
             sentencia1 = null;
             sentencia1 = this.connect.getConexion().prepareCall(sentencia);
@@ -152,8 +198,16 @@ public void actualizarTabla(JTable tabla) {
                 double salario = rs.getDouble("salario");
                 String costoReal = rs.getString("costoReal");
                 int cantMeses = rs.getInt("cant_meses");
+                double septimoDia = rs.getDouble("septimo_dia");
+                double vacaciones = rs.getDouble("vacaciones");
+                double aguinaldo = rs.getDouble("aguinaldo");
+                
+                septimoDia = new BigDecimal(septimoDia).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                vacaciones = new BigDecimal(vacaciones).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                aguinaldo = new BigDecimal(aguinaldo).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                  
 
-                modelo.addRow(new Object[]{dui,cargo, nombres, apellidos, cantMeses, isss, afp, incaf, salario, costoReal});
+                modelo.addRow(new Object[]{dui,cargo, nombres, apellidos, cantMeses,vacaciones,aguinaldo, isss, afp, incaf, salario, costoReal});
 
             }
             rs.close();
@@ -170,6 +224,7 @@ public void actualizarTabla(JTable tabla) {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollBar1 = new javax.swing.JScrollBar();
         jLabel1 = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -229,17 +284,17 @@ public void actualizarTabla(JTable tabla) {
 
         tbEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "DUI", "Puesto", "Nombre", "Apellidos", "Meses trabajados", "ISSS", "AFP", "INCAF", "Salario diario", "Salario mensual"
+                "DUI", "Puesto", "Nombre", "Apellidos", "Meses trabajados", "Vacaciónes", "Aguinaldo", "ISSS", "AFP", "INCAF", "Salario diario", "Salario mensual"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -247,6 +302,18 @@ public void actualizarTabla(JTable tabla) {
             }
         });
         jScrollPane1.setViewportView(tbEmpleados);
+        if (tbEmpleados.getColumnModel().getColumnCount() > 0) {
+            tbEmpleados.getColumnModel().getColumn(5).setMinWidth(80);
+            tbEmpleados.getColumnModel().getColumn(5).setMaxWidth(80);
+            tbEmpleados.getColumnModel().getColumn(6).setMinWidth(80);
+            tbEmpleados.getColumnModel().getColumn(6).setMaxWidth(80);
+            tbEmpleados.getColumnModel().getColumn(7).setMinWidth(50);
+            tbEmpleados.getColumnModel().getColumn(7).setMaxWidth(50);
+            tbEmpleados.getColumnModel().getColumn(8).setMinWidth(50);
+            tbEmpleados.getColumnModel().getColumn(8).setMaxWidth(50);
+            tbEmpleados.getColumnModel().getColumn(9).setMinWidth(50);
+            tbEmpleados.getColumnModel().getColumn(9).setMaxWidth(50);
+        }
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -370,9 +437,9 @@ public void actualizarTabla(JTable tabla) {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
                         .addGap(12, 12, 12)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 18, Short.MAX_VALUE))
+                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtIsss, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(6, 6, 6)
@@ -433,7 +500,7 @@ public void actualizarTabla(JTable tabla) {
                                     .addComponent(spMeses)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(116, 116, 116)
+                                .addGap(90, 90, 90)
                                 .addComponent(btnPuesto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
@@ -453,13 +520,13 @@ public void actualizarTabla(JTable tabla) {
                         .addComponent(txtDui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel7))
                     .addComponent(spMeses, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEliminar)
-                    .addComponent(jLabel8)
                     .addComponent(cbCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(btnEliminar)
                     .addComponent(btnPuesto))
-                .addGap(87, 87, 87)
+                .addGap(69, 69, 69)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -504,7 +571,7 @@ public void actualizarTabla(JTable tabla) {
                 .addGap(3, 3, 3)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -584,7 +651,7 @@ public void actualizarTabla(JTable tabla) {
               
                         try {
                             connect.conectar();
-                            String sentencia = "INSERT INTO empleados (idempleado, cargo, nombres, apellidos, salario, isss, afp, incaf, costoReal, cant_meses) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            String sentencia = "INSERT INTO empleados (idempleado, cargo, nombres, apellidos, salario, isss, afp, incaf, costoReal, cant_meses, septimo_dia, vacaciones, aguinaldo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
                             ps.setString(1, duiStr);
@@ -597,6 +664,9 @@ public void actualizarTabla(JTable tabla) {
                             ps.setString(8, incaf);
                             ps.setString(9, salarioMensual);
                             ps.setInt(10, cantMeses);
+                            ps.setDouble(11, septimoDia);
+                            ps.setDouble(12, vaca);
+                            ps.setDouble(13, aguinaldo);
 
                             ps.executeUpdate();
 
@@ -634,9 +704,13 @@ public void actualizarTabla(JTable tabla) {
     private void btnCalcularPrestacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularPrestacionesActionPerformed
         String cargoSeleccionado = (String) cbCargo.getSelectedItem();
         double salarioNominal = obtenerSalarioPorCargo(cargoSeleccionado);
-        int diasLaborados = obtenerDiasLaboradosPorCargo(cargoSeleccionado);
-        int horasLaboradas = obtenerHorasLaboradasPorCargo(cargoSeleccionado);
+        double diasLaborados = obtenerDiasLaboradosPorCargo(cargoSeleccionado);
+        double horasLaboradas = obtenerHorasLaboradasPorCargo(cargoSeleccionado);
         double recargoPor = obtenerRecargoPorCargo(cargoSeleccionado);
+        double isssPorcentaje = obtenerIsssPorCargo(cargoSeleccionado);
+        double afpPorcentaje = obtenerAfpPorCargo(cargoSeleccionado);
+        double incafPorcentaje = obtenerIncafPorCargo(cargoSeleccionado);
+        
         
         int cantMeses = (int) spMeses.getValue();  
         double vacaciones = 0.0; 
@@ -686,8 +760,7 @@ public void actualizarTabla(JTable tabla) {
             diaAguinaldo = 21;
         }
 
-       
-      
+           
  
         if (cantMeses == 0 ) {
             JOptionPane.showMessageDialog(this, "Por favor, complete el campo de meses trabajados.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -700,37 +773,41 @@ public void actualizarTabla(JTable tabla) {
         }
         System.out.println("El salario del cargo " + cargoSeleccionado + " es: " + salarioNominal);
         
-      
-        double recargo = 0;
-        
+        //convirtiendo el recargo de porcentaje a numerico
+        double recargo = 0;      
         recargo = ((recargoPor/100)+1);
         
         
-        final double Cisss = (double) 0.075;
-        final double Cafp = (double) 0.0775;
-        final double Cincaf = (double) 0.01;
-
- 
+        double Cisss = 0;
+        double Cafp = 0;
+        double Cincaf = 0;
+        
+        Cisss = (isssPorcentaje/100);
+        Cafp = (afpPorcentaje/100);
+        Cincaf = (incafPorcentaje/100);
            
             //SEPTIMO DIA
-            double septimoDia = salarioNominal * 7;
-            double vaca = ((salarioNominal * vacaciones)*(recargo))/52;
-            double aguinaldo = (salarioNominal * diaAguinaldo)/52;
+            septimoDia = salarioNominal * 7;
+            vaca = ((salarioNominal * vacaciones) * (recargo)) / 52;
+            aguinaldo = (salarioNominal * diaAguinaldo) / 52;
+            
+            System.out.println("El recargo es: " + septimoDia);
+            System.out.println("El recargo es: " + vaca);
+            System.out.println("El recargo es: " + aguinaldo);
+            
             double isss = (septimoDia+vaca)*Cisss;
             double afp = (septimoDia+vaca)*Cafp;
             double incaf = (septimoDia+vaca)*Cincaf;
             double costoRealSemanal = (septimoDia+vaca+aguinaldo+isss+afp+incaf);
-            double costoRealDiario = (costoRealSemanal/5.5);
+            double costoRealDiario = (costoRealSemanal/diasLaborados);
             double costoRealMensual = costoRealDiario*22;
-            System.out.println("El recargo es: " + recargo);
- 
+            
+            //imprimir en los campos
             txtPrestaciones.setText(String.format("%.2f", costoRealMensual));
             txtAfp.setText(String.format("%.2f", afp));
             txtIsss.setText(String.format("%.2f", isss));
             txtIncaf.setText(String.format("%.2f", incaf));
-
-            btnCalcularPrestaciones.setEnabled(false);
-        
+            btnCalcularPrestaciones.setEnabled(false); 
     }//GEN-LAST:event_btnCalcularPrestacionesActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
@@ -814,6 +891,7 @@ public void actualizarTabla(JTable tabla) {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner spMeses;
     private javax.swing.JTable tbEmpleados;
