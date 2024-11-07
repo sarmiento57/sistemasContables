@@ -553,11 +553,12 @@ public class RegistroServicios extends javax.swing.JPanel {
            
             ps.executeUpdate();
             actualizarTabla(tbServicio);
+            autoIncrementar();
 
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             
             // Limpiar campos
-            SpNumServicio.setValue(0);
+            
             cbTipoServicio.setSelectedIndex(-1);
             txtDescripcion.setText("");
             SpCantEmpleados.setValue(0);
