@@ -27,7 +27,7 @@ public class BalanceComprobacion extends javax.swing.JPanel {
     public BalanceComprobacion() {
         initComponents();
         actualizarTabla(tbBalance);
-        tbBalance.getTableHeader().setBackground(new Color(174, 182, 191));
+        
         
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);

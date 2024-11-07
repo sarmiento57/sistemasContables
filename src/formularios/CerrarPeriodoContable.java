@@ -51,7 +51,7 @@ public class CerrarPeriodoContable extends javax.swing.JPanel {
 
             }
         } catch (SQLException ex) {
-            ex.printStackTrace(); //Maneja la excepción SQL.
+            ex.printStackTrace(); 
         }
     }
 
@@ -134,27 +134,30 @@ public class CerrarPeriodoContable extends javax.swing.JPanel {
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
         PeriodoContable periodoSeleccionado = (PeriodoContable) cbPeriodoContable.getSelectedItem();
         if (periodoSeleccionado == null) {
-            JOptionPane.showMessageDialog(this, "Error debe ingresar un periodo contable para realizar la acción.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: debe seleccionar un periodo contable para realizar la acción.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            PreparedStatement sentencia = this.connect.getConexion().prepareStatement("UPDATE periodo_contable SET cerrado = true WHERE id = ?");
-            sentencia.setInt(1, periodoSeleccionado.getId());
-            sentencia.executeUpdate();
+           
+            PreparedStatement sentenciaTodos = this.connect.getConexion().prepareStatement("UPDATE periodo_contable SET cerrado = true");
+            sentenciaTodos.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Periodo contable finalizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Todos los periodos contables han sido finalizados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+           
             JFrame topFrame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
             if (topFrame != null) {
-                topFrame.dispose(); // Cierra el JFrame que contiene este JPanel
+                topFrame.dispose();
             }
-          
+
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al finalizar el periodo contable.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al finalizar los periodos contables.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        cbPeriodoContable.removeItem(periodoSeleccionado);
+       
+        cbPeriodoContable.removeAllItems();
     }//GEN-LAST:event_btnFinalizarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed

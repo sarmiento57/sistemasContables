@@ -82,7 +82,13 @@ public class EstadoResultado extends javax.swing.JPanel {
 
             double totalIngresos = 0;
             double totalGastosOperativos = 0;
+            double utilidadEjercicios = 0;
+            double impuestoTreinta = 0;
+
+            //neta
             this.utilidadEjercicio = 0;
+            
+
             int filaActual = 0;
 
             while (rs.next()) {
@@ -127,11 +133,21 @@ public class EstadoResultado extends javax.swing.JPanel {
                     filaActual++;
                 }
 
-               
-                this.utilidadEjercicio = (totalIngresos - totalGastosOperativos);
+                utilidadEjercicios = (totalIngresos - totalGastosOperativos);
+                impuestoTreinta = (utilidadEjercicios*0.3);
+                this.utilidadEjercicio = (utilidadEjercicios + impuestoTreinta);
+                
 
                 if (filaActual == 11) {
-                    modelo.addRow(new Object[]{"3302", "Utilidad de ejercicio", utilidadEjercicio});
+                    modelo.addRow(new Object[]{"3302", "Utilidad de ejercicio", utilidadEjercicios});
+                    filaActual++;
+                }
+                if (filaActual == 12) {
+                    modelo.addRow(new Object[]{"", "30% de impuesto", impuestoTreinta});
+                    filaActual++;
+                }
+                if (filaActual == 13) {
+                    modelo.addRow(new Object[]{"", "Utilidad Neta", utilidadEjercicio});
                     filaActual++;
                 }
             }
@@ -241,7 +257,7 @@ public class EstadoResultado extends javax.swing.JPanel {
                 {null, null, null}
             },
             new String [] {
-                "Código de  cuenta", "Nombre de cuenta", "Monto"
+                "Código de  cuenta", "Nombre de cuenta", "Saldo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -265,9 +281,9 @@ public class EstadoResultado extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -306,7 +322,7 @@ public class EstadoResultado extends javax.swing.JPanel {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

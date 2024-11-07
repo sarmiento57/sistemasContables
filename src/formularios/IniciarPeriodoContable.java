@@ -141,18 +141,18 @@ public class IniciarPeriodoContable extends javax.swing.JPanel {
             java.util.Date fechaIniUtil = this.fechaInicio.getDate();
             java.util.Date fechaFnUtil = this.fechaFin.getDate();
 
-            // Validar que ambas fechas no sean nulas y que la fecha de fin sea mayor que la fecha de inicio
+           
             if (fechaIniUtil == null || fechaFnUtil == null) {
                 JOptionPane.showMessageDialog(this, "Por favor, selecciona ambas fechas.", "Error", JOptionPane.ERROR_MESSAGE);
-                return; // Salir del método si las fechas son nulas
+                return; 
             }
 
             if (fechaFnUtil.before(fechaIniUtil)) {
                 JOptionPane.showMessageDialog(this, "La fecha de fin debe ser mayor que la fecha de inicio.", "Error", JOptionPane.ERROR_MESSAGE);
-                return; // Salir del método si la fecha de fin no es mayor
+                return; 
             }
 
-            // Restablecer todos los periodos contables antes de crear uno nuevo
+           
             restablecerTodosLosPeriodos();
 
             try {
@@ -169,10 +169,10 @@ public class IniciarPeriodoContable extends javax.swing.JPanel {
                 // Cierra el JFrame
                 JFrame topFrame = (JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
                 if (topFrame != null) {
-                    topFrame.dispose(); // Cierra el JFrame que contiene este JPanel
+                    topFrame.dispose(); 
                 }
 
-                // Muestra el formulario de RegistroTransacciones
+               
                 Application.showForm(new RegistroTransacciones());
 
             } catch (SQLException ex) {

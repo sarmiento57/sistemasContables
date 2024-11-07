@@ -11,11 +11,14 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import sistemacontable.SubCuenta;
@@ -35,6 +38,7 @@ public class RegistroServicios extends javax.swing.JPanel {
         initComponents();
         llenarComboBox();
         actualizarTabla(tbServicio);
+        autoIncrementar();
         
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -43,6 +47,32 @@ public class RegistroServicios extends javax.swing.JPanel {
             tbServicio.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
+    
+    //auto incrementar
+    private void autoIncrementar() {
+        String query = "SELECT MAX(id) FROM servicios";
+        int numServicio = 1; 
+
+        try {
+            PreparedStatement ps = connect.getConexion().prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                numServicio = rs.getInt(1) + 1;  
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al obtener el número de servicio: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
+        SpNumServicio.setValue(numServicio);
+        SpNumServicio.setEnabled(false);      
+    
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -393,12 +423,6 @@ public class RegistroServicios extends javax.swing.JPanel {
     float total = 0, totalSinIva = 0, iva = 0;
     int cantmeses = (int) spMeses.getValue();
     double costosIdirectos = costosIndirectos.getCostosIndirectos();
-    
- 
-    
-
-    // Imprime el valor de tipoServicio para verificar el contenido
-    
 
     //Validando campis   
     if (numServicio == 0 || cantmeses == 0 || tipoServicio.isEmpty() || cliente.isEmpty() || descripcion.isEmpty()) {
@@ -480,7 +504,7 @@ public class RegistroServicios extends javax.swing.JPanel {
         SubCuenta selectedService = (SubCuenta) selectedItem;
         int valorNumericoCb1 = selectedService.getIdClasificacion();
 
-        // Obtener otros valores de entrada
+        // Obtener valores de entrada
         String servicio = cbTipoServicio.getSelectedItem().toString();
         int numServicio = (int) SpNumServicio.getValue();
         String cliente = txtCliente.getText().trim();
@@ -511,7 +535,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             String sentencia = "INSERT INTO servicios (id, idservicio, nombre_cliente, cantEmpleados, descripcion, costoTotal, cantidad_meses, servicio, precioventa, mano_obra, por_cif) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
-            // Configuración de los parámetros de la consulta
+            
             ps.setInt(1, numServicio);
             ps.setInt(2, valorNumericoCb1);
             ps.setString(3, cliente);
@@ -526,7 +550,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             
             
 
-            // Ejecutar la actualización
+           
             ps.executeUpdate();
             actualizarTabla(tbServicio);
 
@@ -534,7 +558,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             
             // Limpiar campos
             SpNumServicio.setValue(0);
-            cbTipoServicio.setSelectedIndex(-1); // Desmarcar selección
+            cbTipoServicio.setSelectedIndex(-1);
             txtDescripcion.setText("");
             SpCantEmpleados.setValue(0);
             txtCliente.setText("");
@@ -567,7 +591,7 @@ public class RegistroServicios extends javax.swing.JPanel {
     
     public void actualizarTabla(JTable tabla) {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.setRowCount(0); // Limpia la tabla
+        modelo.setRowCount(0); 
 
         try {
             String sentencia = "SELECT nombre_cliente, cantempleados, descripcion, costototal, cantidad_meses, servicio, precioventa, mano_obra, por_cif FROM servicios ORDER BY nombre_cliente";

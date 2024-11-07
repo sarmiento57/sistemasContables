@@ -192,14 +192,13 @@ public class BalanceGeneral extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, true, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tbGeneral.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(tbGeneral);
 
         lbFechaFin.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
