@@ -27,6 +27,7 @@ public class EstadoResultado extends javax.swing.JPanel {
      */
     Conexion connect = new Conexion();
     private double utilidadEjercicio;
+    private double impuestoTreinta;
     public EstadoResultado() {
         initComponents();
         actualizarTablaResultado(jbResultado);
@@ -83,7 +84,9 @@ public class EstadoResultado extends javax.swing.JPanel {
             double totalIngresos = 0;
             double totalGastosOperativos = 0;
             double utilidadEjercicios = 0;
-            double impuestoTreinta = 0;
+            
+            //impuesto
+            this.impuestoTreinta = 0;
 
             //neta
             this.utilidadEjercicio = 0;
@@ -134,8 +137,8 @@ public class EstadoResultado extends javax.swing.JPanel {
                 }
 
                 utilidadEjercicios = (totalIngresos - totalGastosOperativos);
-                impuestoTreinta = (utilidadEjercicios*0.3);
-                this.utilidadEjercicio = (utilidadEjercicios + impuestoTreinta);
+                this.impuestoTreinta = (utilidadEjercicios*0.3);
+                this.utilidadEjercicio = (utilidadEjercicios - impuestoTreinta);
                 
 
                 if (filaActual == 11) {
@@ -204,7 +207,7 @@ public class EstadoResultado extends javax.swing.JPanel {
                 filaActual++;
 
                 if (filaActual == 1) {
-                 modelo.addRow(new Object[]{"3302", "Utilidad del Ejercicio",utilidad});
+                 modelo.addRow(new Object[]{"3302", "Utilidad Neta",utilidad});
                  filaActual++;
                 }
                 capitalNuevo = saldo + utilidad;
@@ -224,6 +227,9 @@ public class EstadoResultado extends javax.swing.JPanel {
     
     public double getUtilidadEjercicio() {
         return this.utilidadEjercicio;
+    }
+    public double getImpuestos() {
+        return this.impuestoTreinta;
     }
 
     

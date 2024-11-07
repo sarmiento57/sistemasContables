@@ -771,7 +771,7 @@ public void actualizarTabla(JTable tabla) {
             JOptionPane.showMessageDialog(this, "No se pudo recuperar los datos para el cargo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        System.out.println("El salario del cargo " + cargoSeleccionado + " es: " + salarioNominal);
+        
         
         //convirtiendo el recargo de porcentaje a numerico
         double recargo = 0;      
@@ -808,6 +808,7 @@ public void actualizarTabla(JTable tabla) {
             txtIsss.setText(String.format("%.2f", isss));
             txtIncaf.setText(String.format("%.2f", incaf));
             btnCalcularPrestaciones.setEnabled(false); 
+            System.out.println("El salario del cargo " + cargoSeleccionado + " es: " + costoRealMensual);
     }//GEN-LAST:event_btnCalcularPrestacionesActionPerformed
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
