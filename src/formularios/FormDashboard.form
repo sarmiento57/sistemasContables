@@ -73,14 +73,14 @@
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="C:\Users\sarsg\Downloads\pngwing.com.png"/>
+          <Image iconType="3" name="/icon/png/java.png"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="C:\Users\sarsg\Downloads\pngwing.com (2).png"/>
+          <Image iconType="3" name="/icon/png/django.png"/>
         </Property>
       </Properties>
     </Component>

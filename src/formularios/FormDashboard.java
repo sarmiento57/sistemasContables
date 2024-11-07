@@ -32,9 +32,9 @@ public class FormDashboard extends javax.swing.JPanel {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Aumenta la productividad de tu empresa o negocio con el software que necesitas, sistemas a tu medida.");
 
-        jLabel5.setIcon(new javax.swing.ImageIcon("C:\\Users\\sarsg\\Downloads\\pngwing.com.png")); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/png/java.png"))); // NOI18N
 
-        jLabel4.setIcon(new javax.swing.ImageIcon("C:\\Users\\sarsg\\Downloads\\pngwing.com (2).png")); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/png/django.png"))); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
