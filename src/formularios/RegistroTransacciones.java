@@ -407,7 +407,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
             // Elimina la fila de la base de datos
             try {
-                String sentencia = "DELETE FROM transaccion WHERE idtransaccion = ?";
+                String sentencia = "DELETE FROM transaccion WHERE idcuenta = ?";
                 PreparedStatement ps = connect.getConexion().prepareStatement(sentencia);
                 ps.setInt(1, idtransaccion);
                 ps.executeUpdate();
