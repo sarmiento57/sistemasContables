@@ -1,4 +1,4 @@
-# sistemasContables
+# sistemasContablesGrupo03GD02
 Aplicación de contabilidad SIC115
 
 
