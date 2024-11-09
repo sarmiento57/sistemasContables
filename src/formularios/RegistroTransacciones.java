@@ -10,11 +10,15 @@ import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import raven.toast.Notifications;
 import sistemacontable.SubCuenta;
 
 /**
@@ -30,6 +34,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
     
     public RegistroTransacciones() {
         initComponents();
+        actualizarIdTransaccion();
         lb.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:$h1.font");
         
@@ -116,6 +121,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
         jLabel1.setText("Código de Transacción:");
 
+        txtIdTransaccion.setEditable(false);
         txtIdTransaccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtIdTransaccionKeyTyped(evt);
@@ -137,6 +143,10 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         jLabel6.setText("Debe");
 
         jLabel7.setText("Haber");
+
+        txtDebe.setText("0.0");
+
+        txtHaber.setText("0.0");
 
         btnAgregarTransaccion.setText("Agregar Transacción");
         btnAgregarTransaccion.addActionListener(new java.awt.event.ActionListener() {
@@ -324,35 +334,41 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_txtIdTransaccionKeyTyped
     
+    private static final Set<String> CUENTAS_CON_IVA = new HashSet<>(Arrays.asList(
+            "Cuentas por cobrar", "Mobiliario y equipo de oficina", "Cuentas por pagar",
+            "Documentos por pagar", "Ingresos por Servicios", "Proyectos de Software Personalizado",
+            "Mantenimiento y soporte", "Gastos de Administración", "Gastos de Oficina",
+            "Gastos de Tecnología", "Gastos de venta"
+    ));
+    
+    
     private void btnAgregarTransaccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarTransaccionActionPerformed
-         if (txtIdTransaccion.getText().isEmpty() || txtDescripcion.getText().isEmpty() || this.jfecha.getDate() == null || (txtDebe.getText().isEmpty() && txtHaber.getText().isEmpty())) {
+        if (txtIdTransaccion.getText().isEmpty() || txtDescripcion.getText().isEmpty() || this.jfecha.getDate() == null
+                || (txtDebe.getText().isEmpty() && txtHaber.getText().isEmpty())) {
             JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-         
-         if (!isNumeric(txtDebe.getText()) || !isNumeric(txtHaber.getText())) {
-        JOptionPane.showMessageDialog(this, "Por favor, ingrese valores numéricos en los campos 'Debe' y 'Haber'.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
+
+        if (!isNumeric(txtDebe.getText()) || !isNumeric(txtHaber.getText())) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese valores numéricos en los campos 'Debe' y 'Haber'.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        
+
         int valorId = Integer.parseInt(txtIdTransaccion.getText());
         String valorCb1 = cbCuenta.getSelectedItem().toString();
-        String valorCb2 = cbCuenta.getSelectedItem().toString();
-        // Separar el valor numérico del texto en los ComboBox      
         int valorNumericoCb1 = Integer.parseInt(valorCb1.split("-")[0].trim());
-        String valorTxt0 = valorCb2.split("-")[1].trim();
-        
+        String valorTxt0 = valorCb1.split("-")[1].trim();
         String valorTxt1 = txtDescripcion.getText();
         double valorTxt2 = Double.parseDouble(txtDebe.getText());
         double valorTxt3 = Double.parseDouble(txtHaber.getText());
 
-        // Guardar los datos en la base de datos
         try {
             connect.conectar();
             String sentencia = "INSERT INTO transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
             java.sql.Date fecha_trans = new java.sql.Date(this.jfecha.getDate().getTime());
-            
+
             ps.setInt(1, valorId);
             ps.setInt(2, valorNumericoCb1);
             ps.setString(3, valorTxt0);
@@ -360,24 +376,181 @@ public class RegistroTransacciones extends javax.swing.JPanel {
             ps.setDate(5, fecha_trans);
             ps.setDouble(6, valorTxt2);
             ps.setDouble(7, valorTxt3);
-            
+
             ps.executeUpdate();
+
             
-            JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            String consultaUltimasTransacciones = "SELECT debe_trans, haber_trans FROM transaccion ORDER BY idtransaccion DESC LIMIT 3";
+            PreparedStatement psConsulta = this.connect.getConexion().prepareStatement(consultaUltimasTransacciones);
+            ResultSet rs = psConsulta.executeQuery();
+
+            double totalDebe = 0.0, totalHaber = 0.0;
+            int transaccionesContadas = 0;
+
             
-            cbCuenta.setSelectedIndex(0);
-            txtIdTransaccion.setText("");
-            txtDescripcion.setText("");
-            txtDebe.setText("0.0");
-            txtHaber.setText("0.0");
-            jfecha.setDate(null);
+            while (rs.next()) {
+                totalDebe += rs.getDouble("debe_trans");
+                totalHaber += rs.getDouble("haber_trans");
+                transaccionesContadas++;
+            }
+
+           
+            if (transaccionesContadas > 0) {
+                if (totalDebe == totalHaber) {
+                    JOptionPane.showMessageDialog(this, "Datos guardados correctamente. Se cumplió partida doble.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "No se encontraron transacciones suficientes para validar partida doble.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            }
+
+            boolean necesitaIVA = CUENTAS_CON_IVA.contains(valorTxt0);
+
+            if (necesitaIVA) {
+                double iva = (valorTxt2 + valorTxt3) * 0.13;
+                String cuentaIVA = valorTxt1.toLowerCase().contains("compra") ? "IVA Crédito Fiscal" : "IVA Débito Fiscal";
+                double debeIVA = valorTxt1.toLowerCase().contains("compra") ? iva : 0.0;
+                double haberIVA = valorTxt1.toLowerCase().contains("venta") ? iva : 0.0;
+
+                String descripcionIVA = "IVA aplicado a la transacción " + valorId;
+
+                String sentenciaIVA = "INSERT INTO transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement psIVA = this.connect.getConexion().prepareStatement(sentenciaIVA);
+
+                psIVA.setInt(1, valorId + 1);
+                psIVA.setInt(2, valorNumericoCb1);
+                psIVA.setString(3, cuentaIVA);
+                psIVA.setString(4, descripcionIVA);
+                psIVA.setDate(5, fecha_trans);
+                psIVA.setDouble(6, debeIVA);
+                psIVA.setDouble(7, haberIVA);
+
+                psIVA.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Transacción de IVA registrada automáticamente con ID: " + (valorId + 1), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                completarPartidaDoble();
+            }
+
         } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al guardar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar la transacción: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         actualizarTabla(tbTransaccion);
+        actualizarIdTransaccion();
+    
     }//GEN-LAST:event_btnAgregarTransaccionActionPerformed
+    
+    private void actualizarIdTransaccion() {
+        int nuevoId = obtenerNuevoIdTransaccion();  
+        txtIdTransaccion.setText(String.valueOf(nuevoId));  
+    }
+
+    private int obtenerNuevoIdTransaccion() {
+        int nuevoId = 1;  
+
+        try {
+            connect.conectar();
+
+           
+            String consultaUltimoId = "SELECT MAX(idtransaccion) AS max_id FROM transaccion";
+            PreparedStatement psConsulta = this.connect.getConexion().prepareStatement(consultaUltimoId);
+            ResultSet rs = psConsulta.executeQuery();
+
+            if (rs.next()) {
+               
+                nuevoId = rs.getInt("max_id") + 1;
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al obtener el último ID: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return nuevoId; 
+    }
+
+    
+    private void completarPartidaDoble() {
+        try {
+            
+            String query = "SELECT MAX(idtransaccion) FROM transaccion";
+            PreparedStatement ps = this.connect.getConexion().prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+            int idUltimaTransaccion = 0;
+            if (rs.next()) {
+                idUltimaTransaccion = rs.getInt(1);
+            }
+            if (idUltimaTransaccion == 0) {
+              
+                Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
+                        "Por favor, guarde la transacción para cumplir partida doble.");
+                return; 
+            }
+
+            query = "SELECT idtransaccion, debe_trans, haber_trans, descripcion FROM transaccion WHERE idtransaccion = ? OR idtransaccion = ? ORDER BY idtransaccion DESC";
+            ps = this.connect.getConexion().prepareStatement(query);
+            ps.setInt(1, idUltimaTransaccion - 1);
+            ps.setInt(2, idUltimaTransaccion);
+            rs = ps.executeQuery();
+     
+            double debeTrans1 = 0.0, haberTrans1 = 0.0;
+            double debeTrans2 = 0.0, haberTrans2 = 0.0;
+            String descripcion = "";
+
+            
+            if (rs.next()) {
+                debeTrans1 = rs.getDouble("debe_trans");
+                haberTrans1 = rs.getDouble("haber_trans");
+               
+                if (rs.getInt("idtransaccion") == idUltimaTransaccion - 1) {
+                    descripcion = rs.getString("descripcion");
+                }
+            }
+            if (rs.next()) {
+                debeTrans2 = rs.getDouble("debe_trans");
+                haberTrans2 = rs.getDouble("haber_trans");
+              
+                if (rs.getInt("idtransaccion") == idUltimaTransaccion - 1) {
+                    descripcion = rs.getString("descripcion");
+                }
+            }
+  
+            double totalDebe = debeTrans1 + debeTrans2;
+            double totalHaber = haberTrans1 + haberTrans2;
+
+          
+            txtIdTransaccion.setText(String.valueOf(idUltimaTransaccion + 1)); 
+            txtDescripcion.setText(descripcion); 
+       
+            if (haberTrans2 > 0) {
+               
+                txtDebe.setText(String.valueOf(totalDebe + totalHaber));
+                txtHaber.setText("0.0"); 
+            } else if (debeTrans2 > 0) {
+             
+                txtHaber.setText(String.valueOf(totalDebe + totalHaber));
+                txtDebe.setText("0.0");  
+            } else {
+               
+                txtDebe.setText("0.0");
+                txtHaber.setText("0.0");
+            }
+                 
+            if (totalDebe != totalHaber) {
+                JOptionPane.showMessageDialog(this,
+                        "¡Atención! Para cumplir con la partida doble, por favor elija una cuenta para guardar la transacción.",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al completar la partida doble: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
+
+    
     private boolean isNumeric(String str) {
     if (str == null || str.isEmpty()) {
         return false;
@@ -391,7 +564,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
     }
     
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
-        txtIdTransaccion.setText("");
+
         txtDescripcion.setText("");
         cbCuenta.setSelectedIndex(0);
         jfecha.setDate(null);
