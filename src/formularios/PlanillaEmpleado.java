@@ -749,7 +749,7 @@ public void actualizarTabla(JTable tabla) {
         }
         
         //agui
-        if (cantMeses > 0 && cantMeses <= 12) {
+        if (cantMeses > 0 && cantMeses < 36) {
            
             diaAguinaldo = 15;
         } else if (cantMeses >= 36 && cantMeses <= 108) {
