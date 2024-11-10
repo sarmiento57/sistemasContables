@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import raven.toast.Notifications;
@@ -60,7 +61,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         modelo.setRowCount(0); // Limpia la tabla
 
         try {
-            String sentencia = "SELECT * FROM transaccion ORDER BY fecha_transaccion";
+            String sentencia = "SELECT * FROM transaccion ORDER BY idtransaccion";
             
             PreparedStatement sentencia1;
             
@@ -78,7 +79,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 double debe = rs.getDouble("debe_trans");
                 double haber = rs.getDouble("haber_trans");
 //                modelo.addRow(new Object[]{fecha, idcuenta, nombre, descripcion, debe, haber});
-                modelo.addRow(new Object[]{idcuenta, fecha, nombre, descripcion, debe, haber});
+                modelo.addRow(new Object[]{idtransaccion, fecha, nombre, descripcion, debe, haber});
             }
             rs.close();
         } catch (SQLException ex) {
@@ -206,7 +207,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Código", "Fecha", "Cuenta", "Descripción", "Debe", "Haber"
+                "ID", "Fecha", "Cuenta", "Descripción", "Debe", "Haber"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -365,7 +366,6 @@ public class RegistroTransacciones extends javax.swing.JPanel {
         try {
             connect.conectar();
             String sentencia = "INSERT INTO transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
             java.sql.Date fecha_trans = new java.sql.Date(this.jfecha.getDate().getTime());
 
@@ -379,31 +379,38 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
             ps.executeUpdate();
 
-            
+            // obtener las ultimas 3 transaccione spara validar los mensajes
             String consultaUltimasTransacciones = "SELECT debe_trans, haber_trans FROM transaccion ORDER BY idtransaccion DESC LIMIT 3";
             PreparedStatement psConsulta = this.connect.getConexion().prepareStatement(consultaUltimasTransacciones);
             ResultSet rs = psConsulta.executeQuery();
 
-            double totalDebe = 0.0, totalHaber = 0.0;
+            double totalDebe2 = 0.0, totalHaber2 = 0.0;
+            double totalDebe3 = 0.0, totalHaber3 = 0.0;
             int transaccionesContadas = 0;
 
-            
             while (rs.next()) {
-                totalDebe += rs.getDouble("debe_trans");
-                totalHaber += rs.getDouble("haber_trans");
+                double debe = rs.getDouble("debe_trans");
+                double haber = rs.getDouble("haber_trans");
+                //acumula el total debe y hahaber de las ultimas 2 transacciones
+                if (transaccionesContadas < 2) { 
+                    totalDebe2 += debe;
+                    totalHaber2 += haber;
+                }
+                //acumula el total de las ultimas 3 transacciones
+                totalDebe3 += debe; 
+                totalHaber3 += haber;
                 transaccionesContadas++;
             }
 
            
-            if (transaccionesContadas > 0) {
-                if (totalDebe == totalHaber) {
-                    JOptionPane.showMessageDialog(this, "Datos guardados correctamente. Se cumplió partida doble.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                }
+            if ((transaccionesContadas >= 2 && totalDebe2 == totalHaber2)
+                    || (transaccionesContadas == 3 && totalDebe3 == totalHaber3)) {
+                JOptionPane.showMessageDialog(this, "Datos guardados correctamente. Se cumplió partida doble.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "No se encontraron transacciones suficientes para validar partida doble.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
+                        "Datos guardados correctamente.");
             }
+
 
             boolean necesitaIVA = CUENTAS_CON_IVA.contains(valorTxt0);
 
@@ -430,6 +437,8 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
                 JOptionPane.showMessageDialog(this, "Transacción de IVA registrada automáticamente con ID: " + (valorId + 1), "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 completarPartidaDoble();
+ 
+
             }
 
         } catch (SQLException e) {
@@ -438,7 +447,6 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
         actualizarTabla(tbTransaccion);
         actualizarIdTransaccion();
-    
     }//GEN-LAST:event_btnAgregarTransaccionActionPerformed
     
     private void actualizarIdTransaccion() {
@@ -536,10 +544,9 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 txtHaber.setText("0.0");
             }
                  
-            if (totalDebe != totalHaber) {
-                JOptionPane.showMessageDialog(this,
-                        "¡Atención! Para cumplir con la partida doble, por favor elija una cuenta para guardar la transacción.",
-                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+            if (totalDebe != totalHaber) {      
+                Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
+                        "¡Atención! Para cumplir con la partida doble, por favor elija una cuenta para guardar la transacción.");
             }
 
         } catch (SQLException e) {
@@ -580,7 +587,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
             // Elimina la fila de la base de datos
             try {
-                String sentencia = "DELETE FROM transaccion WHERE idcuenta = ?";
+                String sentencia = "DELETE FROM transaccion WHERE idtransaccion = ?";
                 PreparedStatement ps = connect.getConexion().prepareStatement(sentencia);
                 ps.setInt(1, idtransaccion);
                 ps.executeUpdate();
