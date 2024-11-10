@@ -420,7 +420,14 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                 double debeIVA = valorTxt1.toLowerCase().contains("compra") ? iva : 0.0;
                 double haberIVA = valorTxt1.toLowerCase().contains("venta") ? iva : 0.0;
 
-                String descripcionIVA = "IVA aplicado a la transacción " + valorId;
+                String descripcionIVA = valorTxt1;
+                if (debeIVA != 0.0) {
+                    descripcionIVA += " Con IVA de: " + "" + debeIVA;
+                }
+                if (haberIVA != 0.0) {
+                    descripcionIVA += " Con IVA de: " + "" + haberIVA;
+                }
+
 
                 String sentenciaIVA = "INSERT INTO transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement psIVA = this.connect.getConexion().prepareStatement(sentenciaIVA);

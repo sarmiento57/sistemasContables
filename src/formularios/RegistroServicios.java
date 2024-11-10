@@ -22,6 +22,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import raven.toast.Notifications;
 import sistemacontable.SubCuenta;
 /**
  *
@@ -546,10 +547,10 @@ public class RegistroServicios extends javax.swing.JPanel {
 
         try {
             // Convertir los valores
-            double costoTotal = Double.parseDouble(txtCostoT.replace(',', '.')); // Reemplaza la coma por punto
-            double precioTotal = Double.parseDouble(precioVenta.replace(',', '.')); // Reemplaza la coma por punto
-            double manoObraTotal = Double.parseDouble(manoObra.replace(',', '.')); // Reemplaza la coma por punto
-            double cifPOR = Double.parseDouble(cif.replace(',', '.')); // Reemplaza la coma por punto
+            double costoTotal = Double.parseDouble(txtCostoT.replace(',', '.')); 
+            double precioTotal = Double.parseDouble(precioVenta.replace(',', '.'));
+            double manoObraTotal = Double.parseDouble(manoObra.replace(',', '.')); 
+            double cifPOR = Double.parseDouble(cif.replace(',', '.')); 
 
            
             String sentencia = "INSERT INTO servicios (id, idservicio, nombre_cliente, cantEmpleados, descripcion, costoTotal, cantidad_meses, servicio, precioventa, mano_obra, por_cif) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -568,6 +569,9 @@ public class RegistroServicios extends javax.swing.JPanel {
             ps.setDouble(11, cifPOR);
 
             ps.executeUpdate();
+            
+            Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
+                    "Datos guardados correctamente." );
 
             // Pregunta si se quiere registrar en las transacciones
             int respuesta = JOptionPane.showConfirmDialog(this,
@@ -598,21 +602,21 @@ public class RegistroServicios extends javax.swing.JPanel {
             int idCuenta = 0;
 
             if (servicio.equalsIgnoreCase("Desarrollo de software personalizado")) {
-                cuenta = "Ingresos por Servicios";
-                haberTrans = precioTotal;
-                idCuenta = 4401;
-            } else if (servicio.equalsIgnoreCase("Mantenimiento y soporte técnico")) {
-                cuenta = "Mantenimiento y soporte";
-                haberTrans = precioTotal;
-                idCuenta = 4403;
-            } else if (servicio.equalsIgnoreCase("Consultoría tecnológica")) {
-                cuenta = "Cuentas por cobrar";
-                debeTrans = precioTotal;
-                idCuenta = 1103;
-            } else if (servicio.equalsIgnoreCase("Aplicaciones de gestión empresarial")) {
                 cuenta = "Proyectos de Software Personalizado";
-                haberTrans = precioTotal;
+                haberTrans = costoTotal;
                 idCuenta = 4402;
+            } else if (servicio.equalsIgnoreCase("Mantenimiento y soporte tecnico")) {
+                cuenta = "Mantenimiento y soporte";
+                haberTrans = costoTotal;
+                idCuenta = 4403;
+            } else if (servicio.equalsIgnoreCase("Consultoria tecnologica")) {
+                cuenta = "Ingresos por Servicios";
+                haberTrans = costoTotal;
+                idCuenta = 4401;
+            } else if (servicio.equalsIgnoreCase("Aplicaciones de gestion empresarial")) {
+                cuenta = "Ingresos por Servicios";
+                haberTrans = costoTotal;
+                idCuenta = 4401;
             }
 
         
@@ -628,7 +632,37 @@ public class RegistroServicios extends javax.swing.JPanel {
 
             psTransaccion.executeUpdate();
             
-          
+            //Para iva
+            String sentenciaporUltima2 = "SELECT MAX(idtransaccion) FROM public.transaccion";
+            PreparedStatement psultima2 = this.connect.getConexion().prepareStatement(sentenciaporUltima2);
+            ResultSet rsultima2 = psultima2.executeQuery();
+
+            int idUltimavez2 = 1;
+            if (rsultima2.next()) {
+                idUltimavez2 = rsultima2.getInt(1) + 1;
+            }
+
+            String cuentaPartidaDoble2 = "IVA Débito Fiscal";          
+            int idCuentaPartidaDoble2 = 2102;  
+            double debePartidaDoble2 = 0.0;
+            double haberPartidaDoble2 = Math.round((precioTotal - costoTotal) * 100.0) / 100.0;
+            String descripcionIva = descripcion + " " + "Con IVA de: " + "" + haberPartidaDoble2;
+
+            String sentenciaPartidaDoble2 = "INSERT INTO public.transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) "
+                    + "VALUES (?, ?, ?, ?, CURRENT_DATE, ?, ?)";
+            PreparedStatement psPartidaDoble2 = this.connect.getConexion().prepareStatement(sentenciaPartidaDoble2);
+            psPartidaDoble2.setInt(1, idUltimavez2);
+            psPartidaDoble2.setInt(2, idCuentaPartidaDoble2);
+            psPartidaDoble2.setString(3, cuentaPartidaDoble2);
+            psPartidaDoble2.setString(4, descripcionIva);
+            psPartidaDoble2.setDouble(5, debePartidaDoble2);
+            psPartidaDoble2.setDouble(6, haberPartidaDoble2);
+
+            psPartidaDoble2.executeUpdate();
+            Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
+                    "IVA aplicado a la transacción " + idTransaccion);
+            
+            //Cumplir partida doble
             String[] opciones = {"Caja", "Bancos"};
             int seleccion = JOptionPane.showOptionDialog(this,
                     "Seleccione la cuenta para completar la partida doble",
@@ -654,17 +688,17 @@ public class RegistroServicios extends javax.swing.JPanel {
 
            
             String cuentaPartidaDoble = (seleccion == 0) ? "Caja" : "Bancos";  // "Caja" si selecciona 0, "Bancos" si selecciona 1
-            int idCuentaPartidaDoble = (seleccion == 0) ? 1101 : 1102;  // Asumimos que 1001 es la cuenta de Caja y 1002 la de Bancos
+            int idCuentaPartidaDoble = (seleccion == 0) ? 1101 : 1102;  //1101 para caja y 1102 para banco
             double debePartidaDoble = 0.0;
             double haberPartidaDoble = 0.0;
 
             
             if (servicio.equalsIgnoreCase("Desarrollo de software personalizado")
-                    || servicio.equalsIgnoreCase("Mantenimiento y soporte técnico")
-                    || servicio.equalsIgnoreCase("Aplicaciones de gestión empresarial")) {
+                    || servicio.equalsIgnoreCase("Mantenimiento y soporte tecnico")
+                    || servicio.equalsIgnoreCase("Aplicaciones de gestion empresarial")) {
                 debePartidaDoble = precioTotal;
-            } else if (servicio.equalsIgnoreCase("Consultoría tecnológica")) {
-                haberPartidaDoble = precioTotal;
+            } else if (servicio.equalsIgnoreCase("Consultoria tecnologica")) {
+                debePartidaDoble = precioTotal;
             }
 
             
@@ -681,12 +715,11 @@ public class RegistroServicios extends javax.swing.JPanel {
             psPartidaDoble.executeUpdate();
 
            
-            JOptionPane.showMessageDialog(this, "La transacción de la partida doble se ha registrado correctamente en " + cuentaPartidaDoble + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "La transacción se ha registrado correctamente en la cuenta " + cuentaPartidaDoble + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
             actualizarTabla(tbServicio);
             autoIncrementar();
-
-            JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+      
 
             // Limpiar campos
             cbTipoServicio.setSelectedIndex(-1);

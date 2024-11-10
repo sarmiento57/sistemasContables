@@ -30,7 +30,7 @@ public class BalanceGeneral extends javax.swing.JPanel {
      * Creates new form BalanceGeneral
      */
     Conexion connect = new Conexion();
-     EstadoResultado estadoResultado = new EstadoResultado();
+    EstadoResultado estadoResultado = new EstadoResultado();
     public BalanceGeneral() {
         initComponents();
         actualizarTablaGeneral(tbGeneral);
@@ -151,6 +151,8 @@ public class BalanceGeneral extends javax.swing.JPanel {
         }
         
     }
+    
+    
 
 
     /**
