@@ -8,6 +8,7 @@ import clases.Conexion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -138,6 +139,10 @@ public class EstadoResultado extends javax.swing.JPanel {
 
                 utilidadEjercicios = (totalIngresos - totalGastosOperativos);
                 this.impuestoTreinta = (utilidadEjercicios*0.3);
+                //aproximar a dos decimales
+                DecimalFormat df = new DecimalFormat("#.00");
+                this.impuestoTreinta = Double.parseDouble(df.format(utilidadEjercicios * 0.3));
+                
                 this.utilidadEjercicio = (utilidadEjercicios - impuestoTreinta);
                 
 

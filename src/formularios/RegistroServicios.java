@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -25,6 +26,7 @@ import sistemacontable.SubCuenta;
 /**
  *
  * @author Carlos Escobar - ES21001
+ * 
  */
 public class RegistroServicios extends javax.swing.JPanel {
 
@@ -34,11 +36,13 @@ public class RegistroServicios extends javax.swing.JPanel {
     Conexion connect = new Conexion();
     CostosIndirectos costosIndirectos = new CostosIndirectos();
     
+    
     public RegistroServicios() {
         initComponents();
         llenarComboBox();
         actualizarTabla(tbServicio);
         autoIncrementar();
+    
         
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -379,50 +383,64 @@ public class RegistroServicios extends javax.swing.JPanel {
 
     private void btnCalcularCostoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularCostoActionPerformed
         //recuperando datos de la BD
-        String query = "SELECT cargo, costoreal FROM public.empleados";
+    String query = "SELECT cargo, costoreal FROM public.empleados";
     double costoRealDesarrollador = 0.0;
     double costoRealAnalista = 0.0;
     double costoRealCoordinador = 0.0;
 
-    try {
-        PreparedStatement stmt = connect.getConexion().prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
+        try {
+            PreparedStatement stmt = connect.getConexion().prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
 
-        while (rs.next()) {
-            String cargo = rs.getString("cargo");
-            double costoReal = rs.getDouble("costoreal");
+            while (rs.next()) {
+                String cargo = rs.getString("cargo");
+                String costoRealString = rs.getString("costoreal");
 
-            switch (cargo) {
-                case "Desarrollador":
-                    costoRealDesarrollador = costoReal;
-                    break;
-                case "Coordinador de proyecto":
-                    costoRealCoordinador = costoReal;
-                    break;
-                case "Análista de sistema":
-                    costoRealAnalista = costoReal;
-                    break;
-                default:
-                    System.out.println("Cargo no reconocido: " + cargo);
-                    break;
+                // remplazar la coma por un punto
+                if (costoRealString != null) {
+                    costoRealString = costoRealString.replace(',', '.');
+                }
+
+                try {
+                    // convertirlo a double
+                    double costoReal = Double.parseDouble(costoRealString);
+
+                    switch (cargo) {
+                        case "Desarrollador":
+                            costoRealDesarrollador = costoReal;
+                            break;
+                        case "Coordinador de proyecto":
+                            costoRealCoordinador = costoReal;
+                            break;
+                        case "Análista de sistema":
+                            costoRealAnalista = costoReal;
+                            break;
+                        default:
+                            System.out.println("Cargo no reconocido: " + cargo);
+                            break;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Error al convertir costoReal: " + costoRealString);
+                }
             }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        rs.close();
-        stmt.close();
+    
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    int numServicio = (int) SpNumServicio.getValue();
-    String tipoServicio = cbTipoServicio.getSelectedItem().toString();
-    String cliente = txtCliente.getText();
-    int cantEmpleados = (int) SpCantEmpleados.getValue();
-    String descripcion = txtDescripcion.getText();
-    double manoObraDirecta = 0, porcentajeCIF=0, cif=0;
-    float total = 0, totalSinIva = 0, iva = 0;
-    int cantmeses = (int) spMeses.getValue();
-    double costosIdirectos = costosIndirectos.getCostosIndirectos();
+        int numServicio = (int) SpNumServicio.getValue();
+        String tipoServicio = cbTipoServicio.getSelectedItem().toString();
+        String cliente = txtCliente.getText();
+        int cantEmpleados = (int) SpCantEmpleados.getValue();
+        String descripcion = txtDescripcion.getText();
+        double manoObraDirecta = 0, porcentajeCIF = 0, cif = 0;
+        double total = 0, totalSinIva = 0, iva = 0;
+        int cantmeses = (int) spMeses.getValue();
+        double costosIdirectos = costosIndirectos.getCostosIndirectos();
 
     //Validando campis   
     if (numServicio == 0 || cantmeses == 0 || tipoServicio.isEmpty() || cliente.isEmpty() || descripcion.isEmpty()) {
@@ -431,35 +449,34 @@ public class RegistroServicios extends javax.swing.JPanel {
         try {
             switch (tipoServicio) {
                 case "Desarrollo de software personalizado":
-                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador))*cantmeses;
-                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos *cantmeses)* porcentajeCIF));
-                    iva = (float) (totalSinIva * 0.13);
+                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador)) * cantmeses;
+                    porcentajeCIF = manoObraDirecta / (manoObraDirecta + (costosIdirectos * cantmeses));
+                    totalSinIva = manoObraDirecta + ((costosIdirectos * cantmeses) * porcentajeCIF);
+                    iva = totalSinIva * 0.13;
                     total = totalSinIva + iva; 
                     break;
 
                 case "Aplicaciones de gestion empresarial":
-                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador))*cantmeses;
-                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos *cantmeses)* porcentajeCIF));
-                    iva = (float) (totalSinIva * 0.13);
+                    manoObraDirecta = ((cantEmpleados * costoRealDesarrollador) + (1 * costoRealAnalista) + (1 * costoRealCoordinador)) * cantmeses;
+                    porcentajeCIF = manoObraDirecta / (manoObraDirecta + (costosIdirectos * cantmeses));
+                    totalSinIva = manoObraDirecta + ((costosIdirectos * cantmeses) * porcentajeCIF);
+                    iva = totalSinIva * 0.13;
                     total = totalSinIva + iva; 
                     break;
 
                 case "Consultoria tecnologica":
-                    manoObraDirecta = (1 * costoRealDesarrollador)*cantmeses;
-                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos*cantmeses) * porcentajeCIF));
-                    iva = (float) (totalSinIva * 0.13);
+                    manoObraDirecta = (1 * costoRealDesarrollador) * cantmeses;
+                    porcentajeCIF = manoObraDirecta / (manoObraDirecta + (costosIdirectos * cantmeses));
+                    totalSinIva = manoObraDirecta + ((costosIdirectos * cantmeses) * porcentajeCIF);
+                    iva = totalSinIva * 0.13;
                     total = totalSinIva + iva;
-                   
                     break;
 
                 case "Mantenimiento y soporte tecnico":
-                    manoObraDirecta = (1 * costoRealDesarrollador)*cantmeses;
-                    porcentajeCIF =manoObraDirecta/(manoObraDirecta+(costosIdirectos * cantmeses));
-                    totalSinIva = (float) (manoObraDirecta + ((costosIdirectos*cantmeses) * porcentajeCIF));
-                    iva = (float) (totalSinIva * 0.13);
+                    manoObraDirecta = (1 * costoRealDesarrollador) * cantmeses;
+                    porcentajeCIF = manoObraDirecta / (manoObraDirecta + (costosIdirectos * cantmeses));
+                    totalSinIva = manoObraDirecta + ((costosIdirectos * cantmeses) * porcentajeCIF);
+                    iva = totalSinIva * 0.13;
                     total = totalSinIva + iva;
                     break;
 
@@ -471,7 +488,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             txtCostoTotal.setText(String.format("%.2f", totalSinIva));
             txtPrecioVenta.setText(String.format("%.2f", total));
             
-            cif = (porcentajeCIF*100);
+            cif = porcentajeCIF * 100;
             txtCIF.setText(String.format("%.0f", cif));
             btnCalcularCosto.setEnabled(false);
             
@@ -528,37 +545,150 @@ public class RegistroServicios extends javax.swing.JPanel {
         }
 
         try {
-            float costoTotal = Float.parseFloat(txtCostoT);
-            float precioTotal = Float.parseFloat(precioVenta);
-            double manoObraTotal = Double.parseDouble(manoObra);
-            double cifPOR = Double.parseDouble(cif);
+            // Convertir los valores
+            double costoTotal = Double.parseDouble(txtCostoT.replace(',', '.')); // Reemplaza la coma por punto
+            double precioTotal = Double.parseDouble(precioVenta.replace(',', '.')); // Reemplaza la coma por punto
+            double manoObraTotal = Double.parseDouble(manoObra.replace(',', '.')); // Reemplaza la coma por punto
+            double cifPOR = Double.parseDouble(cif.replace(',', '.')); // Reemplaza la coma por punto
+
+           
             String sentencia = "INSERT INTO servicios (id, idservicio, nombre_cliente, cantEmpleados, descripcion, costoTotal, cantidad_meses, servicio, precioventa, mano_obra, por_cif) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = this.connect.getConexion().prepareStatement(sentencia);
 
-            
             ps.setInt(1, numServicio);
             ps.setInt(2, valorNumericoCb1);
             ps.setString(3, cliente);
             ps.setInt(4, cantEmpleados);
             ps.setString(5, descripcion);
-            ps.setFloat(6, costoTotal);
+            ps.setDouble(6, costoTotal);
             ps.setInt(7, numMeses);
             ps.setString(8, servicio);
-            ps.setFloat(9, precioTotal);
+            ps.setDouble(9, precioTotal);
             ps.setDouble(10, manoObraTotal);
             ps.setDouble(11, cifPOR);
+
+            ps.executeUpdate();
+
+            // Pregunta si se quiere registrar en las transacciones
+            int respuesta = JOptionPane.showConfirmDialog(this,
+                    "¿Desea registrar el servicio en las transacciones?",
+                    "Confirmar Registro",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (respuesta == JOptionPane.NO_OPTION) {
+                // No guardarlo
+                JOptionPane.showMessageDialog(this, "El servicio no ha sido registrado en las transacciones.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Incrementar el id de la última transacción
+            String sentenciaUltimaTransaccion = "SELECT MAX(idtransaccion) FROM public.transaccion";
+            PreparedStatement psUltimaTransaccion = this.connect.getConexion().prepareStatement(sentenciaUltimaTransaccion);
+            ResultSet rsUltimaTransaccion = psUltimaTransaccion.executeQuery();
+            int idTransaccion = 1;
+            if (rsUltimaTransaccion.next()) {
+                idTransaccion = rsUltimaTransaccion.getInt(1) + 1;
+            }
+
+            // Determinar la cuenta según el servicio seleccionado
+            String cuenta = "";
+            double debeTrans = 0.0;
+            double haberTrans = 0.0;
+            int idCuenta = 0;
+
+            if (servicio.equalsIgnoreCase("Desarrollo de software personalizado")) {
+                cuenta = "Ingresos por Servicios";
+                haberTrans = precioTotal;
+                idCuenta = 4401;
+            } else if (servicio.equalsIgnoreCase("Mantenimiento y soporte técnico")) {
+                cuenta = "Mantenimiento y soporte";
+                haberTrans = precioTotal;
+                idCuenta = 4403;
+            } else if (servicio.equalsIgnoreCase("Consultoría tecnológica")) {
+                cuenta = "Cuentas por cobrar";
+                debeTrans = precioTotal;
+                idCuenta = 1103;
+            } else if (servicio.equalsIgnoreCase("Aplicaciones de gestión empresarial")) {
+                cuenta = "Proyectos de Software Personalizado";
+                haberTrans = precioTotal;
+                idCuenta = 4402;
+            }
+
+        
+            String sentenciaTransaccion = "INSERT INTO public.transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) "
+                    + "VALUES (?, ?, ?, ?, CURRENT_DATE, ?, ?)";
+            PreparedStatement psTransaccion = this.connect.getConexion().prepareStatement(sentenciaTransaccion);
+            psTransaccion.setInt(1, idTransaccion);
+            psTransaccion.setInt(2, idCuenta);
+            psTransaccion.setString(3, cuenta);
+            psTransaccion.setString(4, descripcion);
+            psTransaccion.setDouble(5, debeTrans);
+            psTransaccion.setDouble(6, haberTrans);
+
+            psTransaccion.executeUpdate();
             
+          
+            String[] opciones = {"Caja", "Bancos"};
+            int seleccion = JOptionPane.showOptionDialog(this,
+                    "Seleccione la cuenta para completar la partida doble",
+                    "Seleccionar cuenta",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[0]);  
+
+            if (seleccion == JOptionPane.CLOSED_OPTION) {
+                return;  
+            }
             
+            String sentenciaporUltima = "SELECT MAX(idtransaccion) FROM public.transaccion";
+            PreparedStatement psultima = this.connect.getConexion().prepareStatement(sentenciaporUltima);
+            ResultSet rsultima = psultima.executeQuery(); 
+            
+            int idUltimavez = 1; 
+            if (rsultima.next()) {
+                idUltimavez = rsultima.getInt(1) + 1; 
+            }
 
            
-            ps.executeUpdate();
+            String cuentaPartidaDoble = (seleccion == 0) ? "Caja" : "Bancos";  // "Caja" si selecciona 0, "Bancos" si selecciona 1
+            int idCuentaPartidaDoble = (seleccion == 0) ? 1101 : 1102;  // Asumimos que 1001 es la cuenta de Caja y 1002 la de Bancos
+            double debePartidaDoble = 0.0;
+            double haberPartidaDoble = 0.0;
+
+            
+            if (servicio.equalsIgnoreCase("Desarrollo de software personalizado")
+                    || servicio.equalsIgnoreCase("Mantenimiento y soporte técnico")
+                    || servicio.equalsIgnoreCase("Aplicaciones de gestión empresarial")) {
+                debePartidaDoble = precioTotal;
+            } else if (servicio.equalsIgnoreCase("Consultoría tecnológica")) {
+                haberPartidaDoble = precioTotal;
+            }
+
+            
+            String sentenciaPartidaDoble = "INSERT INTO public.transaccion (idtransaccion, idcuenta, nombre_cuenta, descripcion, fecha_transaccion, debe_trans, haber_trans) "
+                    + "VALUES (?, ?, ?, ?, CURRENT_DATE, ?, ?)";
+            PreparedStatement psPartidaDoble = this.connect.getConexion().prepareStatement(sentenciaPartidaDoble);
+            psPartidaDoble.setInt(1, idUltimavez);
+            psPartidaDoble.setInt(2, idCuentaPartidaDoble);
+            psPartidaDoble.setString(3, cuentaPartidaDoble);
+            psPartidaDoble.setString(4, descripcion);
+            psPartidaDoble.setDouble(5, debePartidaDoble);
+            psPartidaDoble.setDouble(6, haberPartidaDoble);
+
+            psPartidaDoble.executeUpdate();
+
+           
+            JOptionPane.showMessageDialog(this, "La transacción de la partida doble se ha registrado correctamente en " + cuentaPartidaDoble + ".", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
             actualizarTabla(tbServicio);
             autoIncrementar();
 
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            
+
             // Limpiar campos
-            
             cbTipoServicio.setSelectedIndex(-1);
             txtDescripcion.setText("");
             SpCantEmpleados.setValue(0);
@@ -571,7 +701,7 @@ public class RegistroServicios extends javax.swing.JPanel {
             spMeses.setValue(0);
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Error, verifique los campos numéricos.");
+            JOptionPane.showMessageDialog(this, "Error, verifique los campos numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al guardar los datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
