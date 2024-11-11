@@ -413,11 +413,11 @@ public class RegistroTransacciones extends javax.swing.JPanel {
 
 
             boolean necesitaIVA = CUENTAS_CON_IVA.contains(valorTxt0);
-
+            //determinar donde se guardara el iva
             if (necesitaIVA) {
                 double iva = (valorTxt2 + valorTxt3) * 0.13;
-                String cuentaIVA = valorTxt1.toLowerCase().contains("compra") ? "IVA Crédito Fiscal" : "IVA Débito Fiscal";
-                double debeIVA = valorTxt1.toLowerCase().contains("compra") ? iva : 0.0;
+                String cuentaIVA = (valorTxt1.toLowerCase().contains("compra") || valorTxt1.toLowerCase().contains("pago")) ? "IVA Crédito Fiscal" : "IVA Débito Fiscal";
+                double debeIVA = (valorTxt1.toLowerCase().contains("compra") || valorTxt1.toLowerCase().contains("pago")) ? iva : 0.0;
                 double haberIVA = valorTxt1.toLowerCase().contains("venta") ? iva : 0.0;
 
                 String descripcionIVA = valorTxt1;
@@ -553,7 +553,7 @@ public class RegistroTransacciones extends javax.swing.JPanel {
                  
             if (totalDebe != totalHaber) {      
                 Notifications.getInstance().show(Notifications.Type.INFO, Notifications.Location.TOP_CENTER,
-                        "¡Atención! Para cumplir con la partida doble, por favor elija una cuenta para guardar la transacción.");
+                        "¡Atención! Para cumplir con la partida doble, por favor elija una nueva cuenta y guardar la transacción.");
             }
 
         } catch (SQLException e) {
