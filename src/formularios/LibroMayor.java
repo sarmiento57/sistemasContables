@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import clases.Conexion;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -71,6 +77,21 @@ public class LibroMayor extends javax.swing.JPanel {
                 }
             }
         });
+        
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = header.columnAtPoint(e.getPoint());
+
+                //abrir jframe desde el indice o titulo de la tabla
+                if (column == 3) {
+                    generarPDF("LibroMayor.pdf", tbLibroMayor);
+                }
+            }
+        });
+
+
+
     }
 
     public void actualizarTabla() {
@@ -300,6 +321,54 @@ public class LibroMayor extends javax.swing.JPanel {
             return false;
         }
     }
+    
+    public void generarPDF(String nombreArchivo, JTable tabla) {
+        try {
+            // Crear el escritor y el documento PDF
+            PdfWriter writer = new PdfWriter(nombreArchivo);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            // Agregar título al documento
+            document.add(new Paragraph("Libro mayor").setBold().setFontSize(16));
+
+            // Verificar si la tabla tiene datos
+            if (tabla.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "La tabla está vacía. No hay datos para exportar.");
+                return;
+            }
+
+            // Crear la tabla de iText con el mismo número de columnas que la tabla original
+            int columnas = tabla.getColumnCount();
+            Table pdfTable = new Table(columnas);
+
+            // Agregar encabezados de columna
+            for (int i = 0; i < columnas; i++) {
+                pdfTable.addCell(new Cell().add(new Paragraph(tabla.getColumnName(i)).setBold()));
+            }
+
+            // Agregar filas de la tabla
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                for (int j = 0; j < columnas; j++) {
+                    Object valorCelda = tabla.getValueAt(i, j);
+                    pdfTable.addCell(new Cell().add(new Paragraph(valorCelda != null ? valorCelda.toString() : "")));
+                }
+            }
+
+            // Agregar la tabla al documento
+            document.add(pdfTable);
+
+            // Cerrar el documento
+            document.close();
+
+            // Mensaje de éxito
+            JOptionPane.showMessageDialog(this, "PDF generado con éxito en: " + nombreArchivo);
+        } catch (Exception e) {
+            // Manejar errores
+            JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -349,7 +418,7 @@ public class LibroMayor extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "Ver transacciones", "", "", ""
+                "Ver transacciones", "", "", "Imprimir"
             }
         ));
         jScrollPane1.setViewportView(tbLibroMayor);

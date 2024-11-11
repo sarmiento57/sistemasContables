@@ -19,6 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
 
 /**
  *
@@ -40,6 +46,18 @@ public class BalanceGeneral extends javax.swing.JPanel {
         for (int i = 0; i < tbGeneral.getColumnCount(); i++) {
             tbGeneral.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
+
+        tbGeneral.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tbGeneral.rowAtPoint(evt.getPoint());
+                int col = tbGeneral.columnAtPoint(evt.getPoint());
+
+                if (row == tbGeneral.getRowCount() - 1 && "Imprimir".equals(tbGeneral.getValueAt(row, col))) {
+
+                    generarPDF("BalanceGeneral.pdf", tbGeneral);
+                }
+            }
+        });
       
     }
     public void actualizarTablaGeneral(JTable tabla) {
@@ -143,6 +161,9 @@ public class BalanceGeneral extends javax.swing.JPanel {
             modelo.setValueAt(activoCo, 1, 4);
             modelo.addRow(new Object[]{"3302", "Utilidad Neta",null, utilidadEjercicio});
             modelo.addRow(new Object[]{"", "TOTAL PASIVO + CAPITAL",null,null, activoPasivo});
+            modelo.addRow(new Object[]{"", "","","",""});
+            modelo.addRow(new Object[]{"", "","","",""});
+            modelo.addRow(new Object[]{"", "","","","Imprimir"});
 
             System.out.println("Patrimonios después de la suma: " + patrimonios);
 
@@ -150,6 +171,40 @@ public class BalanceGeneral extends javax.swing.JPanel {
             ex.printStackTrace();
         }
         
+    }
+    
+    public void generarPDF(String nombreArchivo, JTable tabla) {
+        try {
+            PdfWriter writer = new PdfWriter(nombreArchivo);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            document.add(new Paragraph("Balance General").setBold().setFontSize(16));
+
+            // Crear una tabla de iText para agregar datos
+            int columnas = tabla.getColumnCount();
+            Table pdfTable = new Table(columnas);
+
+            // Agregar encabezados de las columnas
+            for (int i = 0; i < columnas; i++) {
+                pdfTable.addCell(new Cell().add(new Paragraph(tabla.getColumnName(i))));
+            }
+
+            // Agregar contenido de las filas
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                for (int j = 0; j < columnas; j++) {
+                    Object valorCelda = tabla.getValueAt(i, j);
+                    pdfTable.addCell(new Cell().add(new Paragraph(valorCelda != null ? valorCelda.toString() : "")));
+                }
+            }
+
+            document.add(pdfTable);
+            document.close();
+            JOptionPane.showMessageDialog(this, "PDF generado con éxito en " + nombreArchivo);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
     
     

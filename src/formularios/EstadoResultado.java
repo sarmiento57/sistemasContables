@@ -8,13 +8,22 @@ import clases.Conexion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
+import java.text.DecimalFormat;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,6 +51,30 @@ public class EstadoResultado extends javax.swing.JPanel {
         for (int i = 0; i < tbCapital.getColumnCount(); i++) {
             tbCapital.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
+        
+        jbResultado.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = jbResultado.rowAtPoint(evt.getPoint());
+                int col = jbResultado.columnAtPoint(evt.getPoint());
+
+                if (row == jbResultado.getRowCount() - 1 && "Imprimir".equals(jbResultado.getValueAt(row, col))) {
+
+                    generarPDF("EstadoResultados.pdf", jbResultado);
+                }
+            }
+        });
+        
+        tbCapital.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tbCapital.rowAtPoint(evt.getPoint());
+                int col = tbCapital.columnAtPoint(evt.getPoint());
+
+                if (row == tbCapital.getRowCount() - 1 && "Imprimir".equals(tbCapital.getValueAt(row, col))) {
+
+                    generarPDF("EstadoCapital.pdf", tbCapital);
+                }
+            }
+        });
         
     }
     public void actualizarTablaResultado(JTable tabla) {
@@ -158,6 +191,11 @@ public class EstadoResultado extends javax.swing.JPanel {
                     modelo.addRow(new Object[]{"", "Utilidad Neta", utilidadEjercicio});
                     filaActual++;
                 }
+                if (filaActual == 14) {
+                    modelo.addRow(new Object[]{"", "", "Imprimir"});
+                    filaActual++;
+                }
+                
             }
             rs.close();
             
@@ -222,6 +260,16 @@ public class EstadoResultado extends javax.swing.JPanel {
                     filaActual++;
                 }
                 
+                if (filaActual == 3) {
+                    modelo.addRow(new Object[]{"", "", ""});
+                    filaActual++;
+                }
+                
+                if (filaActual == 4) {
+                    modelo.addRow(new Object[]{"", "", "Imprimir"});
+                    filaActual++;
+                }
+                
             }
             rs.close();
 
@@ -235,6 +283,102 @@ public class EstadoResultado extends javax.swing.JPanel {
     }
     public double getImpuestos() {
         return this.impuestoTreinta;
+    }
+    
+    public void generarPDF(String nombreArchivo, JTable tabla) {
+        try {
+            // Crear el escritor y el documento PDF
+            PdfWriter writer = new PdfWriter(nombreArchivo);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            // Agregar título al documento
+            document.add(new Paragraph("Estado de Resultado").setBold().setFontSize(16));
+
+            // Verificar si la tabla tiene datos
+            if (tabla.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "La tabla está vacía. No hay datos para exportar.");
+                return;
+            }
+
+            // Crear la tabla de iText con el mismo número de columnas que la tabla original
+            int columnas = tabla.getColumnCount();
+            Table pdfTable = new Table(columnas);
+
+            // Agregar encabezados de columna
+            for (int i = 0; i < columnas; i++) {
+                pdfTable.addCell(new Cell().add(new Paragraph(tabla.getColumnName(i)).setBold()));
+            }
+
+            // Agregar filas de la tabla
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                for (int j = 0; j < columnas; j++) {
+                    Object valorCelda = tabla.getValueAt(i, j);
+                    pdfTable.addCell(new Cell().add(new Paragraph(valorCelda != null ? valorCelda.toString() : "")));
+                }
+            }
+
+            // Agregar la tabla al documento
+            document.add(pdfTable);
+
+            // Cerrar el documento
+            document.close();
+
+            // Mensaje de éxito
+            JOptionPane.showMessageDialog(this, "PDF generado con éxito en: " + nombreArchivo);
+        } catch (Exception e) {
+            // Manejar errores
+            JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    public void generarPDFCapital(String nombreArchivo, JTable tabla) {
+        try {
+            // Crear el escritor y el documento PDF
+            PdfWriter writer = new PdfWriter(nombreArchivo);
+            PdfDocument pdfDoc = new PdfDocument(writer);
+            Document document = new Document(pdfDoc);
+
+            // Agregar título al documento
+            document.add(new Paragraph("Estado de Resultado").setBold().setFontSize(16));
+
+            // Verificar si la tabla tiene datos
+            if (tabla.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "La tabla está vacía. No hay datos para exportar.");
+                return;
+            }
+
+            // Crear la tabla de iText con el mismo número de columnas que la tabla original
+            int columnas = tabla.getColumnCount();
+            Table pdfTable = new Table(columnas);
+
+            // Agregar encabezados de columna
+            for (int i = 0; i < columnas; i++) {
+                pdfTable.addCell(new Cell().add(new Paragraph(tabla.getColumnName(i)).setBold()));
+            }
+
+            // Agregar filas de la tabla
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                for (int j = 0; j < columnas; j++) {
+                    Object valorCelda = tabla.getValueAt(i, j);
+                    pdfTable.addCell(new Cell().add(new Paragraph(valorCelda != null ? valorCelda.toString() : "")));
+                }
+            }
+
+            // Agregar la tabla al documento
+            document.add(pdfTable);
+
+            // Cerrar el documento
+            document.close();
+
+            // Mensaje de éxito
+            JOptionPane.showMessageDialog(this, "PDF generado con éxito en: " + nombreArchivo);
+        } catch (Exception e) {
+            // Manejar errores
+            JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     
