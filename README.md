@@ -1,5 +1,3 @@
-perfecto por ultimo utilice un tema o dashboard que encontre en youtube como le dejo sus creditos en mi repo? es de el https://github.com/DJ-Raven donde lo puedo poner? # Sistema Contable Automatizado - Desarrollo Digital S.A. de C.V.
-
 Este repositorio contiene la aplicación desarrollada para el proyecto de la materia SIC-115 (Universidad de El Salvador): un sistema contable automatizado diseñado para la empresa ficticia Desarrollo Digital S.A. de C.V., dedicada al desarrollo de software a medida y aplicaciones para la gestión empresarial.
 
 La aplicación fue desarrollada utilizando Apache NetBeans 18 como entorno de desarrollo y PostgreSQL como sistema de gestión de base de datos, con el propósito de facilitar el registro y control automatizado de las operaciones contables de la empresa.
