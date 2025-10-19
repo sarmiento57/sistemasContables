@@ -13,7 +13,7 @@ El sistema implementa funcionalidades clave para la gestión contable y financie
 
 ## Requisitos de Base de Datos
 
-- El sistema requiere **PostgreSQL versión 16** para garantizar la compatibilidad con el driver JDBC utilizado y evitar problemas de autenticación, debido a cambios en los métodos de autenticación en versiones posteriores (PostgreSQL 17 en adelante usa SCRAM-SHA-256, no soportado por drivers JDBC antiguos).
+- El sistema requiere **PostgreSQL versión 16 o superior** 
 - La conexión se realiza con el usuario **`postgres`** y la contraseña utilizada para iniciar sesión en **pgAdmin** (la misma contraseña que se asignó durante la instalación de PostgreSQL).
 
 ---
